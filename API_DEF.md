@@ -4,7 +4,7 @@ Ruta: POST `/envios/`
 
 Body:
 
-```json
+```
 {
   "peso": int,
   "observaciones": string,
@@ -25,7 +25,7 @@ Params: header `authorization`, `ApiKey: string`
 
 Devuelve:
 
-```json
+```
 {
   "id": int
 }
@@ -35,7 +35,7 @@ Status:
 - 201: se crea correctamente.
 - 400: formato de datos incorrecto.
   - Body:
-    ```json
+    ```
     {
       "errors":{
         string,
@@ -57,7 +57,7 @@ Parametros:
 
 Devuelve:
 
-```json
+```
 {
   "precio": int,
   "tarifas": [
@@ -91,7 +91,7 @@ Status:
 ## GET. Mostrar datos e histórico de todos envíos de tienda
 Ruta: GET `/envios/`
 Body:
-```json
+```
 {
   "fechaInicio": timestamp | null,
   "fechaFin": timestamp | null
@@ -101,7 +101,7 @@ Body:
 Status:
 - 200: Listado de envios e historicos de la tienda entre fechas especificadas:
 
-```json
+```
 [
   {
     "id": int,
@@ -130,7 +130,7 @@ Parametros:
 Status:
 - 200: Devuelve datos básicos de envío:
 
-```json
+```
 {
   "peso": string,
   "historico": [
