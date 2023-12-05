@@ -37,7 +37,7 @@ Status:
   - Body:
     ```json
     {
-      errors:{
+      "errors":{
         string,
         ...  
       }
@@ -49,9 +49,9 @@ Status:
 Ruta: GET `/envios/tarifas?peso=xxx&cp=xxxxx&bultos=xx`
 
 Parametros:
-- peso: `int`. Peso del paquete.
+- peso: `int`. Peso del envío.
 - cp: `string`. Código postal de destinatario.
-- bultos: `int`. Bultos de paquete.
+- bultos: `int`. Bultos de envío.
 - Otras tarifas que se vayan incluyendo en el futuro se especificaran aquí.
 - header `authorization`, `ApiKey: string`
 
@@ -76,18 +76,22 @@ Status:
 - 400: Parámetros incorrectos.
 - 401: API key no identificada o vacía.
 
-## ???. Cancelar envío
-Ruta: UPDATE/DELETE `/envios/{id}`
+## POST. Cancelar envío
+Ruta: POST `/envios/{id}/historico/cancelar`
 Parametros:
-- id: `int`. Id del paquete a cancelar.
+- id: `int`. Id del envío a cancelar.
 - header `authorization`, `ApiKey: string`
-Status: 204, 400
+
+Status:
+- 204: En el histórico del envío se añade un nuevo estado: "Cancelado".
+- 400: Id no existe.
+- 401: API key no identificada o vacía.
 
 
 ## GET. Mostrar datos e histórico de envío
 Ruta: GET `/envios/{id}`
 Parametros:
-- id: `int`. Id del paquete.
+- id: `int`. Id del envío.
 
 Status:
 - 200: Devuelve datos básicos de envío:
@@ -105,3 +109,5 @@ Status:
   ]
 }
 ```
+
+- 400: Id no existe.
