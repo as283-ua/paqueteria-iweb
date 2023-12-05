@@ -88,7 +88,40 @@ Status:
 - 401: API key no identificada o vacía.
 
 
-## GET. Mostrar datos e histórico de envío
+## GET. Mostrar datos e histórico de todos envíos de tienda
+Ruta: GET `/envios/`
+Body:
+```json
+{
+  "fechaInicio": timestamp | null,
+  "fechaFin": timestamp | null
+}
+```
+
+Status:
+- 200: Listado de envios e historicos de la tienda entre fechas especificadas:
+
+```json
+[
+  {
+    "id": int,
+    "historico": [
+      {
+        "estado": string,
+        "timestamp": timestamp,
+        "observaciones": string
+      },
+      ...
+    ],
+    "peso": int,
+    "precio": int,
+    "observaciones": string
+  },
+  ...
+]
+```
+
+## GET. Mostrar datos e histórico de envío (público)
 Ruta: GET `/envios/{id}`
 Parametros:
 - id: `int`. Id del envío.
