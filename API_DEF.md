@@ -121,6 +121,7 @@ Status:
 ]
 ```
 
+- 401: API key no identificada o vacía.
 ## GET. Mostrar datos e histórico de envío (público)
 Ruta: GET `/envios/{id}`
 Parametros:
