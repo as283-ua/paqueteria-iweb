@@ -78,6 +78,7 @@ Status:
 
 ## POST. Cancelar envío
 Ruta: POST `/envios/{id}/historico/cancelar`
+
 Parametros:
 - id: `int`. Id del envío a cancelar.
 - header `authorization`, `ApiKey: string`
@@ -90,6 +91,7 @@ Status:
 
 ## GET. Mostrar datos e histórico de todos envíos de tienda
 Ruta: GET `/envios/`
+
 Body:
 ```
 {
@@ -97,6 +99,8 @@ Body:
   "fechaFin": timestamp | null
 }
 ```
+Parametros:
+- header `authorization`, `ApiKey: string`. En base a la API key se identifica la tienda y se devuelven los envíos de esta misma.
 
 Status:
 - 200: Listado de envios e historicos de la tienda entre fechas especificadas:
