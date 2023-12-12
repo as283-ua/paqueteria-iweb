@@ -11,18 +11,24 @@ public class Historico {
     @EmbeddedId
     private HistoricoId id;
 
+    @Id
+    private Long envioId;
+
+    @Id
+    private Long estadoId;
+
     @Column(insertable = false, updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date fecha;
 
     @ManyToOne
     @MapsId("envioId")
-    @JoinColumn(name = "envio_id")
+    @JoinColumn(name = "envioId")
     private Envio envio;
 
     @ManyToOne
     @MapsId("estadoId")
-    @JoinColumn(name = "estado_id")
+    @JoinColumn(name = "estadoId")
     private Estado estado;
 
     public HistoricoId getId() {

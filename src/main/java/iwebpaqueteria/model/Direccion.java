@@ -33,7 +33,8 @@ public class Direccion {
     @NotNull
     private String telefono;
 
-    @OneToOne(mappedBy = "direccion")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "direccion_id", referencedColumnName = "id")
     private Usuario usuario;
 
     @OneToMany(mappedBy = "direccionOrigen")

@@ -1,5 +1,6 @@
 package iwebpaqueteria.repository;
 
+import iwebpaqueteria.model.Usuario;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,4 +20,15 @@ public class TestTodo {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Test
+    @Transactional
+    public void absolutamenteTodoTest(){
+        // Crear un usuario
+        Usuario usuario = new Usuario();
+        usuario.setNombre("Juan");
+        usuario.setEmail("usu@ua");
+        usuario.setContrasenya("1234");
+        usuario.setTelefono("123456789");
+    }
 }

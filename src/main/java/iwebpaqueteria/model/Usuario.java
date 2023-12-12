@@ -29,6 +29,7 @@ public class Usuario {
     private String telefono;
 
     private String APIKey;
+
     @OneToOne(mappedBy = "usuario")
     private Direccion direccion;
 
