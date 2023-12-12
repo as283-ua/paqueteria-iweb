@@ -44,6 +44,11 @@ public class Usuario {
     public Usuario() {
     }
 
+    // Constructor público con los atributos obligatorios. En este caso el correo electrónico.
+    public Usuario(String email) {
+        this.email = email;
+    }
+
     public Long getId() {
         return id;
     }
