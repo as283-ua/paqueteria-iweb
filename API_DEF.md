@@ -1,4 +1,18 @@
-# Envíos API
+# Especificación de la API: Servicio de paquetería
+
+El propósito de esta API es gestionar envíos. Ofrece distintos end-points a las tiendas que emplearán
+este servicio para gestionar sus envíos.
+
+Las operaciones disponibles son:
+- Crear envío.
+- Realizar consulta de que valdría un envío según sus especificaciones. El objetivo es dar la opción
+    a la tienda de mostrar al cliente el precio del envío antes de realizarlo.
+- Cancelar envío.
+- Mostrar datos e histórico de todos los envíos de la tienda entre dos fechas.
+- Mostrar datos e histórico de un envío concreto. El objetivo de este end-point es que la tienda
+    pueda mostrar al cliente el estado de su envío sin necesidad de tener que acceder a nuestra página,
+    mostrándolo directamente en la web de la tienda.
+
 ## POST. Tienda crea envío.
 Ruta: POST `/envios/`
 
