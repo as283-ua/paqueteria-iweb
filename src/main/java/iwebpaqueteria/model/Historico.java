@@ -8,8 +8,6 @@ import java.util.Objects;
 @Table(name = "historicos")
 @IdClass(HistoricoId.class)
 public class Historico {
-    @EmbeddedId
-    private HistoricoId id;
 
     @Id
     private Long envioId;
@@ -30,14 +28,6 @@ public class Historico {
     @MapsId("estadoId")
     @JoinColumn(name = "estadoId")
     private Estado estado;
-
-    public HistoricoId getId() {
-        return id;
-    }
-
-    public void setId(HistoricoId id) {
-        this.id = id;
-    }
 
     public Date getFecha() {
         return fecha;
@@ -68,11 +58,11 @@ public class Historico {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Historico historico = (Historico) o;
-        return Objects.equals(id, historico.id) && Objects.equals(fecha, historico.fecha);
+        return Objects.equals(fecha, historico.fecha);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(envioId, estadoId);
     }
 }
