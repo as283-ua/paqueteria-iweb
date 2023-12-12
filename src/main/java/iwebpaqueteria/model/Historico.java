@@ -58,7 +58,7 @@ public class Historico {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Historico historico = (Historico) o;
-        return Objects.equals(fecha, historico.fecha);
+        return Objects.equals(fecha, historico.fecha) && Objects.equals(envioId, historico.envioId) && Objects.equals(estadoId, historico.estadoId);
     }
 
     @Override
