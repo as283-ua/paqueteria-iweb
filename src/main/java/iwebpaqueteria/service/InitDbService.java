@@ -1,6 +1,8 @@
 package iwebpaqueteria.service;
 
+import iwebpaqueteria.model.Rol;
 import iwebpaqueteria.model.Usuario;
+import iwebpaqueteria.repository.RolRepository;
 import iwebpaqueteria.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -16,6 +18,9 @@ public class InitDbService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private RolRepository rolRepository;
+
     // Se ejecuta tras crear el contexto de la aplicación
     // para inicializar la base de datos
     @PostConstruct
@@ -25,6 +30,18 @@ public class InitDbService {
         usuario.setContrasenya("123");
         usuario.setTelefono("123456789");
         usuarioRepository.save(usuario);
+
+        Rol webmaster =  new Rol();
+        webmaster.setNombre("webmaster");
+        rolRepository.save(webmaster);
+
+        Rol tienda =  new Rol();
+        tienda.setNombre("tienda");
+        rolRepository.save(tienda);
+
+        Rol repartidor =  new Rol();
+        repartidor.setNombre("repartidor");
+        rolRepository.save(repartidor);
 
     }
 
