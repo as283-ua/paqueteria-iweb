@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<scope>42.2.22</scope>
+			<version>42.2.22</version>
 		</dependency>
 		<dependency>
 			<groupId>org.modelmapper</groupId>
