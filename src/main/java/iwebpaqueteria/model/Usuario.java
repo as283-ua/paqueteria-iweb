@@ -4,6 +4,7 @@ import org.hibernate.cfg.NotYetImplementedException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -38,7 +39,7 @@ public class Usuario {
     private Rol rol;
 
     @OneToMany(mappedBy = "repartidor")
-    private Set<Envio> envios;
+    private Set<Envio> envios = new HashSet<>();
 
 
     public Usuario() {

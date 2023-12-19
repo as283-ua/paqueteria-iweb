@@ -2,6 +2,7 @@ package iwebpaqueteria.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -39,10 +40,10 @@ public class Direccion {
     private Usuario usuario;
 
     @OneToMany(mappedBy = "direccionOrigen")
-    private Set<Envio> enviosOrigen;
+    private Set<Envio> enviosOrigen = new HashSet<>();
 
     @OneToMany(mappedBy = "direccionDestino")
-    private Set<Envio> enviosDestino;
+    private Set<Envio> enviosDestino = new HashSet<>();
 
     public Long getId() {
         return id;

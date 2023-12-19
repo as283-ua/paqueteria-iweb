@@ -2,6 +2,7 @@ package iwebpaqueteria.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -16,7 +17,7 @@ public class Estado {
     private String nombre;
 
     @OneToMany(mappedBy = "estado")
-    private Set<Historico> historicos;
+    private Set<Historico> historicos = new HashSet<>();
 
     public int getId() {
         return id;

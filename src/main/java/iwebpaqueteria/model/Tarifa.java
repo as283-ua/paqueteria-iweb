@@ -2,8 +2,10 @@ package iwebpaqueteria.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tarifas")
@@ -23,7 +25,7 @@ public class Tarifa {
     @JoinTable(name = "envio_tarifa",
             joinColumns = { @JoinColumn(name = "fk_tarifa") },
             inverseJoinColumns = {@JoinColumn(name = "fk_envio")})
-    private List<Envio> envios;
+    private Set<Envio> envios = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -49,7 +51,7 @@ public class Tarifa {
         this.coste = coste;
     }
 
-    public List<Envio> getEnvios() {
+    public Set<Envio> getEnvios() {
         return envios;
     }
 
