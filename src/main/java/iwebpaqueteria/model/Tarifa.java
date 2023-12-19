@@ -53,6 +53,26 @@ public class Tarifa {
         return envios;
     }
 
+    public void addEnvio(Envio envio) {
+        if (envios.contains(envio)) return;
+        // Añadimos la tarea a la lista
+        envios.add(envio);
+        // Establecemos la relación inversa del usuario en la tarea
+        if (!envio.getTarifas().contains(this)) {
+            envio.addTarifa(this);
+        }
+    }
+
+    public void removeEnvio(Envio envio) {
+        if (!envios.contains(envio)) return;
+        // Eliminamos la tarea de la lista
+        envios.remove(envio);
+        // Eliminamos la relación inversa del usuario en la tarea
+        if (envio.getTarifas().contains(this)) {
+            envio.removeTarifa(this);
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

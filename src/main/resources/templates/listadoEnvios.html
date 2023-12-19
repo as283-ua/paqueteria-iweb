@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Envíos')"></head>
+
+<div th:replace="NavMenu"></div>
+
+<body>
+<div class="container-fluid">
+
+    <div class="row mt-3">
+        <div class="col">
+            <h2>Envíos</h2>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Peso</th>
+                    <th>Observaciones</th>
+                    <th>Destino: CP</th>
+                    <th>Destino: Calle</th>
+                    <th th:if="${usuario.rol.nombre == 'webmaster' || usuario.rol.nombre == 'tienda'}">Precio</th>
+                    <th>Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="envio: ${envios}">
+                    <td th:text="${envio.id}"></td>
+                    <td th:text="${envio.peso}"></td>
+                    <td th:text="${envio.observaciones}"></td>
+                    <td th:text="${envio.direccionDestino.codigoPostal}"></td>
+                    <td th:text="${envio.direccionDestino.calle}"></td>
+                    <td th:if="${usuario.rol.nombre == 'webmaster' || usuario.rol.nombre == 'tienda'}" th:text="${envio.precio}"></td>
+                    <td>
+                        <a class="btn btn-warning" th:href="'/envios/' + ${envio.id}">Gestionar/Ver detalles</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <p>Precio total de los envíos: <span th:text="${precioTotal}"></span>€</p>
+
+    <div th:replace="fragments::javascript"/>
+
+</body>
+</html>

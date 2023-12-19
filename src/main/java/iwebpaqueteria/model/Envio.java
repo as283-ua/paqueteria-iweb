@@ -20,6 +20,9 @@ public class Envio implements Serializable {
     private float peso;
 
     @NotNull
+    private int bultos;
+
+    @NotNull
     private float precio;
 
     private String observaciones;
@@ -47,6 +50,17 @@ public class Envio implements Serializable {
     @OneToMany(mappedBy = "envio")
     private Set<Historico> historicos;
 
+    public Envio() {}
+
+    public Envio(float peso, int bultos, float precio, String observaciones, Direccion direccionOrigen, Direccion direccionDestino) {
+        this.peso = peso;
+        this.bultos = bultos;
+        this.precio = precio;
+        this.observaciones = observaciones;
+        this.direccionOrigen = direccionOrigen;
+        this.direccionDestino = direccionDestino;
+    }
+
     public Long getId() {
         return id;
     }
@@ -62,6 +76,12 @@ public class Envio implements Serializable {
     public void setPeso(float peso) {
         this.peso = peso;
     }
+
+    public float getBultos() {
+        return bultos;
+    }
+
+    public void setBultos(int bultos) { this.bultos = bultos; }
 
     public float getPrecio() {
         return precio;
@@ -81,10 +101,6 @@ public class Envio implements Serializable {
 
     public Set<Tarifa> getTarifas() {
         return tarifas;
-    }
-
-    public void setTarifas(Set<Tarifa> tarifas) {
-        throw new NotYetImplementedException();
     }
 
     public Direccion getDireccionOrigen() {
@@ -117,6 +133,22 @@ public class Envio implements Serializable {
 
     public void setHistoricos(Set<Historico> historicos) {
         throw new NotYetImplementedException();
+    }
+
+    public void addTarifa(Tarifa tarifa) {
+        if(tarifas.contains(tarifa)) return;
+        this.tarifas.add(tarifa);
+        if(!tarifa.getEnvios().contains(this)) {
+            tarifa.addEnvio(this);
+        }
+    }
+
+    public void removeTarifa(Tarifa tarifa) {
+        if(!tarifas.contains(tarifa)) return;
+        this.tarifas.remove(tarifa);
+        if(tarifa.getEnvios().contains(this)) {
+            tarifa.removeEnvio(this);
+        }
     }
 
     @Override
