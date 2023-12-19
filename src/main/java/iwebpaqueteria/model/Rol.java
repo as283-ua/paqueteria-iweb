@@ -4,6 +4,7 @@ import org.hibernate.cfg.NotYetImplementedException;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class Rol {
     private String nombre;
 
     @OneToMany(mappedBy = "rol")
-    private Set<Usuario> usuarios;
+    private Set<Usuario> usuarios = new HashSet<>();
 
     public Long getId() {
         return id;

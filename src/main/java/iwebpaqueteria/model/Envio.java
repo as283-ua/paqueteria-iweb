@@ -5,6 +5,7 @@ import org.hibernate.cfg.NotYetImplementedException;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -28,7 +29,7 @@ public class Envio implements Serializable {
     @JoinTable(name = "envio_tarifa",
             joinColumns = { @JoinColumn(name = "fk_envio") },
             inverseJoinColumns = {@JoinColumn(name = "fk_tarifa")})
-    private Set<Tarifa> tarifas;
+    private Set<Tarifa> tarifas = new HashSet<>();
 
     @NotNull
     @ManyToOne
@@ -45,7 +46,7 @@ public class Envio implements Serializable {
     private Usuario repartidor;
 
     @OneToMany(mappedBy = "envio")
-    private Set<Historico> historicos;
+    private Set<Historico> historicos = new HashSet<>();
 
     public Long getId() {
         return id;

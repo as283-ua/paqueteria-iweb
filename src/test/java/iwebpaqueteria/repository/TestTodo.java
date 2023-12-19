@@ -77,13 +77,24 @@ public class TestTodo {
 
         envio = envioRepository.save(envio);
 
+        assertThat(envio.getDireccionDestino().getCalle()).isEqualTo("Calle");
+
         Tarifa tarifa = new Tarifa();
         tarifa.setCoste(10);
         tarifa.setNombre("Larga distancia");
         tarifa = tarifaRepository.save(tarifa);
 
+        envio.getTarifas().add(tarifa);
+        tarifa.getEnvios().add(envio);
 
-        assertThat(envio.getDireccionDestino().getCalle()).isEqualTo("Calle");
+        envio = envioRepository.save(envio);
+        tarifa = tarifaRepository.save(tarifa);
+
+        assertThat(envio.getTarifas().size()).isEqualTo(1);
+        assertThat(tarifa.getEnvios().size()).isEqualTo(1);
+
+        assertThat(envio.getTarifas().iterator().next().getId()).isEqualTo(tarifa.getId());
+        assertThat(tarifa.getEnvios().iterator().next().getId()).isEqualTo(envio.getId());
 
     }
 }
