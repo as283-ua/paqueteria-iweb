@@ -8,11 +8,13 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
+@Sql(scripts = "/clean.sql")
 public class TestTodo {
 
     @Autowired
@@ -39,9 +41,9 @@ public class TestTodo {
 
         // Crear un usuario
         Usuario usuario = new Usuario();
-        usuario.setNombre("Juan");
         usuario.setEmail("usu@ua");
         usuario.setContrasenya("1234");
+        usuario.setNombre("Juan");
         usuario.setTelefono("123456789");
         usuario.setRol(rol);
 
