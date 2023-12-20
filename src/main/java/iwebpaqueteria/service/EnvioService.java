@@ -45,7 +45,7 @@ public class EnvioService {
             throw new IllegalArgumentException("No se ha podido crear el envío");
         }
 
-        float precio = calcularCoste(tarifaDistancia, tarifaBultos, bultos);
+        float precio = calcularCoste(direccionDestino.getCodigoPostal(), bultos);
 
         Envio envio = new Envio(peso, bultos, precio, observaciones, direccionOrigen, direccionDestino);
         envio.addTarifa(tarifaDistancia);
@@ -57,7 +57,7 @@ public class EnvioService {
     @Transactional(readOnly = true)
     public Tarifa calcularTarifaDistancia(String codigoPostal){
         logger.debug("Cálculo de tarifa de distancia");
-        
+
         // Comprobamos que el código postal empieza con 03
         Tarifa tarifa = null;
         if (codigoPostal.startsWith("03")) {
