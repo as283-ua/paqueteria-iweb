@@ -55,8 +55,25 @@ public class EnvioService {
     }
 
     @Transactional(readOnly = true)
-    public Float calcularCoste(Tarifa tarifaDistancia, Tarifa tarifaBultos, int bultos) {
+    public Tarifa calcularTarifaDistancia(String codigoPostal){
+        logger.debug("Cálculo de tarifa de distancia");
+        
+        // Comprobamos que el código postal empieza con 03
+        Tarifa tarifa = null;
+        if (codigoPostal.startsWith("03")) {
+            tarifa = tarifaRepository.findByNombre("Corta distancia");
+        }else {
+            tarifa = tarifaRepository.findByNombre("Larga distancia");
+        }
+        return tarifa;
+    }
+
+    @Transactional(readOnly = true)
+    public Float calcularCoste(String codigoPostal, int bultos){
         logger.debug("Cálculo de coste de envío");
+        Tarifa tarifaDistancia = calcularTarifaDistancia(codigoPostal);
+        Tarifa tarifaBultos = tarifaRepository.findByNombre("Bultos");
+
         return tarifaDistancia.getCoste() + tarifaBultos.getCoste() * bultos;
     }
 
