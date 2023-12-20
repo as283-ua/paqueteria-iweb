@@ -2,9 +2,9 @@ package iwebpaqueteria.controller;
 
 import iwebpaqueteria.authentication.ManagerUserSession;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
-import iwebpaqueteria.dto.LoginData;
 import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.service.UsuarioService;
+import iwebpaqueteria.service.EnvioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +24,9 @@ public class EnvioController {
     UsuarioService usuarioService;
 
     @Autowired
+    EnvioService envioService;
+
+    @Autowired
     ManagerUserSession managerUserSession;
 
     private void comprobarUsuarioLogeado() {
@@ -41,9 +44,9 @@ public class EnvioController {
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
 
         model.addAttribute("usuario", usuario);
-        //model.addAttribute("envios", envioService.findAll());
-        //Double precioTotal = envioService.calcularPrecioTotal(envioService.findAll());
-
+        model.addAttribute("envios", envioService.findAll());
+        Float precioTotal = envioService.calcularPrecioTotal(envioService.findAll());
+        model.addAttribute("precioTotal", precioTotal);
         return "listadoEnvios";
     }
 
@@ -55,7 +58,7 @@ public class EnvioController {
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
 
         model.addAttribute("usuario", usuario);
-        //model.addAttribute("envio", envioService.recuperarEnvio(idEnvio));
+        model.addAttribute("envio", envioService.recuperarEnvio(idEnvio));
 
         return "detalleEnvio";
     }

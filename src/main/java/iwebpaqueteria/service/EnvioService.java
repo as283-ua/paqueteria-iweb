@@ -33,6 +33,25 @@ public class EnvioService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Transactional(readOnly = true)
+    public List<EnvioData> findAll() {
+        logger.debug("Buscando todos los envíos");
+        List<Envio> envios = (List<Envio>) envioRepository.findAll();
+        return envios.stream()
+                .map(envio -> modelMapper.map(envio, EnvioData.class))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public EnvioData recuperarEnvio(Long id) {
+        logger.debug("Buscando envío con id " + id);
+        Envio envio =  envioRepository.findById(id).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + id);
+
+        return modelMapper.map(envio, EnvioData.class);
+    }
+
     @Transactional
     public EnvioData crearEnvio(float peso, int bultos, String observaciones, Usuario tienda, Direccion direccionDestino) {
         logger.debug("Creación de envío de la tienda " + tienda.getId() + " a dirección destino " + direccionDestino.getId());
@@ -74,6 +93,16 @@ public class EnvioService {
         Tarifa tarifaBultos = tarifaRepository.findByNombre("Bultos");
 
         return tarifaDistancia.getCoste() + tarifaBultos.getCoste() * bultos;
+    }
+
+    @Transactional(readOnly = true)
+    public Float calcularPrecioTotal(List<EnvioData> envios){
+        logger.debug("Cálculo de precio total de envíos");
+        Float precioTotal = 0f;
+        for (EnvioData envio : envios) {
+            precioTotal += envio.getPrecio();
+        }
+        return precioTotal;
     }
 
 }
