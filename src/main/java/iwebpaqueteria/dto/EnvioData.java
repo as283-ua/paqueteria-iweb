@@ -1,6 +1,8 @@
 package iwebpaqueteria.dto;
 
 
+import iwebpaqueteria.model.Direccion;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -15,6 +17,8 @@ public class EnvioData {
     private Long direccionDestinoId;
     private Long repartidorId;
     private List<Long> historicosIds;
+    private Direccion direccionOrigen;
+    private Direccion direccionDestino;
 
 // Getters y setters
 
@@ -53,6 +57,14 @@ public class EnvioData {
     public List<Long> getHistoricosIds() { return historicosIds; }
 
     public void setHistoricosIds(List<Long> historicosIds) { this.historicosIds = historicosIds; }
+
+    public Direccion getDireccionOrigen() { return direccionOrigen; }
+
+    public void setDireccionOrigen(Direccion direccionOrigen) { this.direccionOrigen = direccionOrigen; }
+
+    public Direccion getDireccionDestino() { return direccionDestino; }
+
+    public void setDireccionDestino(Direccion direccionDestino) { this.direccionDestino = direccionDestino; }
 
     // Sobreescribimos equals y hashCode para que dos usuarios sean iguales
     // si tienen el mismo ID (ignoramos el resto de atributos)

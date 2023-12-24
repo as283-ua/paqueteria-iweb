@@ -59,6 +59,7 @@ public class EnvioController {
 
         model.addAttribute("usuario", usuario);
         model.addAttribute("envio", envioService.recuperarEnvio(idEnvio));
+        model.addAttribute("tarifas", envioService.tarifasDeEnvio(idEnvio));
 
         return "detalleEnvio";
     }

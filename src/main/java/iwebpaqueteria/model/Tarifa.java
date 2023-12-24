@@ -55,6 +55,13 @@ public class Tarifa {
         return envios;
     }
 
+    public Tarifa() {}
+
+    public Tarifa(String nombre, float coste) {
+        this.nombre = nombre;
+        this.coste = coste;
+    }
+
     public void addEnvio(Envio envio) {
         if (envios.contains(envio)) return;
         // Añadimos la tarea a la lista

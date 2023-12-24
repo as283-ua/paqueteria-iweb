@@ -1,9 +1,7 @@
 package iwebpaqueteria.service;
 
-import iwebpaqueteria.model.Rol;
-import iwebpaqueteria.model.Usuario;
-import iwebpaqueteria.repository.RolRepository;
-import iwebpaqueteria.repository.UsuarioRepository;
+import iwebpaqueteria.model.*;
+import iwebpaqueteria.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -20,6 +18,12 @@ public class InitDbService {
 
     @Autowired
     private RolRepository rolRepository;
+    @Autowired
+    private EnvioRepository envioRepository;
+    @Autowired
+    private DireccionRepository direccionRepository;
+    @Autowired
+    private TarifaRepository tarifaRepository;
 
     // Se ejecuta tras crear el contexto de la aplicación
     // para inicializar la base de datos
@@ -43,6 +47,33 @@ public class InitDbService {
         repartidor.setNombre("repartidor");
         rolRepository.save(repartidor);
 
+        usuario.setRol(webmaster);
+        usuarioRepository.save(usuario);
+
+        Usuario tienda1 = new Usuario("tienda1@ua");
+        tienda1.setNombre("Tienda 1");
+        tienda1.setContrasenya("123");
+        tienda1.setTelefono("234567891");
+        tienda1.setRol(tienda);
+        usuarioRepository.save(tienda1);
+
+        Direccion direccionOrigenTienda1 = new Direccion("0300", "San Vicente", "Alicante", 1, 0, "Calle Alberto", "234567891", "Tienda 1");
+        direccionRepository.save(direccionOrigenTienda1);
+
+        Direccion direccionDestino = new Direccion("0300", "San Vicente", "Alicante", 2, 1, "Calle Vista", "0000000", "Juan Carlos");
+        direccionRepository.save(direccionDestino);
+
+        Tarifa tarifaCortaDistancia = new Tarifa("Corta Distancia", 1);
+        tarifaRepository.save(tarifaCortaDistancia);
+        Tarifa tarifaLargaDistancia = new Tarifa("Larga Distancia", 2);
+        tarifaRepository.save(tarifaLargaDistancia);
+        Tarifa tarifaBultos = new Tarifa("Bultos", 1);
+        tarifaRepository.save(tarifaBultos);
+
+        Envio envio = new Envio(1, 1, 1, "observaciones", direccionOrigenTienda1, direccionDestino);
+        envio.addTarifa(tarifaCortaDistancia);
+        envio.addTarifa(tarifaBultos);
+        envioRepository.save(envio);
     }
 
 }

@@ -1,6 +1,7 @@
 package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.EnvioData;
+import iwebpaqueteria.dto.TarifaData;
 import iwebpaqueteria.model.Direccion;
 import iwebpaqueteria.model.Envio;
 import iwebpaqueteria.model.Tarifa;
@@ -103,6 +104,19 @@ public class EnvioService {
             precioTotal += envio.getPrecio();
         }
         return precioTotal;
+    }
+
+    @Transactional(readOnly = true)
+    public String tarifasDeEnvio(Long id) {
+        logger.debug("Buscando tarifas de envío con id " + id);
+        Envio envio = envioRepository.findById(id).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + id);
+
+        return envio.getTarifas().stream()
+                .map(tarifa -> modelMapper.map(tarifa, TarifaData.class))
+                .map(TarifaData::getNombre)
+                .collect(Collectors.joining(", "));
     }
 
 }

@@ -35,6 +35,9 @@ public class Direccion {
     @NotNull
     private String telefono;
 
+    @NotNull
+    private String nombre;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "direccion_id", referencedColumnName = "id")
     private Usuario usuario;
@@ -44,6 +47,19 @@ public class Direccion {
 
     @OneToMany(mappedBy = "direccionDestino")
     private Set<Envio> enviosDestino = new HashSet<>();
+
+    public Direccion() {}
+
+    public Direccion(String codigoPostal, String localidad, String provincia, int numero, int planta, String calle, String telefono, String nombre) {
+        this.codigoPostal = codigoPostal;
+        this.localidad = localidad;
+        this.provincia = provincia;
+        this.numero = numero;
+        this.planta = planta;
+        this.calle = calle;
+        this.telefono = telefono;
+        this.nombre = nombre;
+    }
 
     public Long getId() {
         return id;
@@ -108,6 +124,10 @@ public class Direccion {
     public void setTelefono(String telefono) {
         this.telefono = telefono;
     }
+
+    public void setNombre(String nombre) { this.nombre = nombre; }
+
+    public String getNombre() { return nombre; }
 
     public Usuario getUsuario() {
         return usuario;
