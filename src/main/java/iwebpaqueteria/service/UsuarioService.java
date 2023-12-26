@@ -3,6 +3,7 @@ package iwebpaqueteria.service;
 import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.model.Usuario;
 import iwebpaqueteria.repository.UsuarioRepository;
+import iwebpaqueteria.service.exception.UsuarioServiceException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

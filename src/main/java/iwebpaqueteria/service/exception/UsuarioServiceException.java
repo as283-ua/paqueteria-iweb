@@ -1,4 +1,4 @@
-package iwebpaqueteria.service;
+package iwebpaqueteria.service.exception;
 
 public class UsuarioServiceException extends RuntimeException {
 
