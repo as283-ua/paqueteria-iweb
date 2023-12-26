@@ -34,6 +34,7 @@ public class RepartidorController {
 
         comprobarUsuarioLogeadoWebMaster();
 
+        model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
         model.addAttribute("repartidores", usuarioService.getRepartidoresRegistrados());
 
         return "listadoRepartidores";

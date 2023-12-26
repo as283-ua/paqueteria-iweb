@@ -1,0 +1,12 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+    <a class="navbar-brand" href="/">Paqueteria</a>
+
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item"><a class="nav-link" href="/equipos">Envios</a></li>
+            <li class="nav-item" th:if="${'webmaster'.equals(usuario.getRol().getNombre())}"><a class="nav-link" href="/repartidores">Repartidores</a></li>
+            <li class="nav-item" th:if="${'webmaster'.equals(usuario.getRol().getNombre())}"><a class="nav-link" href="/tiendas">Tiendas</a></li>
+            <li class="nav-item" th:if="${'tienda'.equals(usuario.getRol().getNombre())}"><a class="nav-link" th:href="'/tiendas/' + ${usuario.id} + '/APIKEY/'">API KEY</a></li>
+        </ul>
+
+</nav>
