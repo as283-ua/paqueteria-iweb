@@ -30,7 +30,7 @@
                     <td th:text="${repartidor.nombre}"></td>
                     <td>
                         <a class="btn btn-primary" th:href="'/repartidores/' + ${repartidor.id}">Detalles</a>
-                        <a class="btn btn-warning">Modificar</a>
+                        <a class="btn btn-warning" th:href="'/repartidores/' + ${repartidor.id} + '/modificar'">Modificar</a>
                         <button class="btn btn-danger" th:onClick="'deleteRepartidor(\'/repartidores/' + ${repartidor.id} + '\')'">Eliminar</button>
                 </tr>
                 </tbody>

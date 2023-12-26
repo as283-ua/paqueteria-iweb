@@ -6,6 +6,7 @@ import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
 import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
 import iwebpaqueteria.dto.LoginData;
 import iwebpaqueteria.dto.UsuarioData;
+import iwebpaqueteria.model.Usuario;
 import iwebpaqueteria.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -65,6 +66,46 @@ public class RepartidorController {
             model.addAttribute("repartidor", new UsuarioData());
 
             return "formNuevoRepartidor";
+        }
+
+        usuarioService.registrarRepartidor(repartidor);
+
+        return "redirect:/repartidores";
+    }
+
+    @GetMapping("/repartidores/{id}/modificar")
+    public String modificarRepartidor(@PathVariable(value="id") Long idUsu, Model model, HttpSession session) {
+
+        comprobarUsuarioLogeadoWebMaster();
+
+        if (usuarioService.findById(idUsu) == null){
+            return "redirect:/repartidores";
+        }
+
+        UsuarioData repartidor = new UsuarioData();
+        repartidor.setId(idUsu);
+        model.addAttribute("repartidor", repartidor);
+        model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+
+        return "formModificarRepartidor";
+    }
+
+    @PostMapping("/repartidores/{id}/modificar")
+    public String modRepartidor(@PathVariable(value="id") Long idUsu, @ModelAttribute UsuarioData repartidor, Model model, HttpSession session) {
+
+        comprobarUsuarioLogeadoWebMaster();
+
+        if (usuarioService.findById(idUsu) == null || !idUsu.equals(repartidor.getId())){
+            return "redirect:/repartidores";
+        }
+
+        if (!repartidor.getTelefono().matches("[0-9+]+")){
+            model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
+            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+            UsuarioData rep = new UsuarioData();
+            rep.setId(idUsu);
+            model.addAttribute("repartidor", rep);
+            return "formModificarRepartidor";
         }
 
         usuarioService.registrarRepartidor(repartidor);
