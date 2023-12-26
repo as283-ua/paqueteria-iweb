@@ -107,4 +107,12 @@ public class UsuarioService {
         List<Usuario> repartidores = usuarios.stream().filter(usuario -> "repartidor".equals(usuario.getRol().getNombre())).collect(Collectors.toList());
         return repartidores.stream().map(repartidor -> modelMapper.map(repartidor, UsuarioData.class)).collect(Collectors.toList());
     }
+
+    @Transactional
+    public void borrarUsuario(Long id) {
+        Optional<Usuario> usuarioBD = usuarioRepository.findById(id);
+        if (usuarioBD.isPresent()){
+            usuarioRepository.delete(usuarioBD.get());
+        }
+    }
 }

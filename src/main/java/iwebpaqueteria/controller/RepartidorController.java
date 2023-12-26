@@ -10,9 +10,7 @@ import iwebpaqueteria.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
@@ -70,6 +68,16 @@ public class RepartidorController {
         }
 
         usuarioService.registrarRepartidor(repartidor);
+
+        return "redirect:/repartidores";
+    }
+
+    @DeleteMapping("/repartidores/{id}")
+    public String borrarRepartidor(@PathVariable(value="id") Long idUsu, Model model, HttpSession session) {
+
+        comprobarUsuarioLogeadoWebMaster();
+
+        usuarioService.borrarUsuario(idUsu);
 
         return "redirect:/repartidores";
     }
