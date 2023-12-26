@@ -80,4 +80,11 @@ public class UsuarioService {
         List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
         return usuarios.stream().map(usuario -> modelMapper.map(usuario, UsuarioData.class)).collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public List<UsuarioData> getRepartidoresRegistrados() {
+        List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
+        List<Usuario> repartidores = usuarios.stream().filter(usuario -> usuario.getRol().getNombre().equals("repartidor")).collect(Collectors.toList());
+        return repartidores.stream().map(repartidor -> modelMapper.map(repartidor, UsuarioData.class)).collect(Collectors.toList());
+    }
 }

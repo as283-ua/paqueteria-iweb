@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Repartidores')"></head>
+
+<!-- <div th:replace="NavMenu"></div> -->
+
+<body>
+<div class="container-fluid">
+
+    <div class="row mt-3">
+        <div class="col">
+            <h2>Repartidores</h2>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="repartidor: ${repartidores}">
+                    <td th:text="${repartidor.id}"></td>
+                    <td th:text="${repartidor.nombre}"></td>
+                    <td>
+                        <a class="btn btn-primary" th:href="'/repartidores/' + ${repartidor.id}">Detalles</a>
+                        <a class="btn btn-warning">Modificar</a>
+                        <a class="btn btn-danger">Eliminar</a>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a class="btn btn-dark" href="repartidores/nuevo">Registrar repartidor</a>
+
+    <div th:replace="fragments::javascript"/>
+
+</body>
+</html>
