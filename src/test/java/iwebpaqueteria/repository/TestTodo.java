@@ -97,4 +97,37 @@ public class TestTodo {
         assertThat(tarifa.getEnvios().iterator().next().getId()).isEqualTo(envio.getId());
 
     }
+
+    @Test
+    public void direccionDeUsuario(){
+        Direccion direccion = new Direccion();
+        direccion.setCodigoPostal("03002");
+        direccion.setLocalidad("Alicante");
+        direccion.setProvincia("Alicante");
+        direccion.setNumero(1);
+        direccion.setPlanta(1);
+        direccion.setCalle("Calle");
+        direccion.setTelefono("123456789");
+        direccion.setNombre("a");
+
+        Rol rol = new Rol();
+        rol.setNombre("Tienda");
+        rol = rolRepository.save(rol);
+
+        // Crear un usuario
+        Usuario tienda = new Usuario();
+        tienda.setEmail("usu@ua");
+        tienda.setContrasenya("1234");
+        tienda.setNombre("Juan");
+        tienda.setTelefono("123456789");
+        tienda.setRol(rol);
+        tienda.setDireccion(direccion);
+        tienda = usuarioRepository.save(tienda);
+
+        tienda = usuarioRepository.findById(tienda.getId()).orElse(null);
+        assertThat(tienda).isNotNull();
+        assertThat(tienda.getDireccion()).isNotNull();
+
+        assertThat(tienda.getDireccion().getCalle()).isEqualTo(direccion.getCalle());
+    }
 }

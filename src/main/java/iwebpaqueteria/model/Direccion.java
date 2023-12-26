@@ -38,10 +38,6 @@ public class Direccion {
     @NotNull
     private String nombre;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "direccion_id", referencedColumnName = "id")
-    private Usuario usuario;
-
     @OneToMany(mappedBy = "direccionOrigen")
     private Set<Envio> enviosOrigen = new HashSet<>();
 
@@ -128,14 +124,6 @@ public class Direccion {
     public void setNombre(String nombre) { this.nombre = nombre; }
 
     public String getNombre() { return nombre; }
-
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
 
     public Set<Envio> getEnviosOrigen() {
         return enviosOrigen;

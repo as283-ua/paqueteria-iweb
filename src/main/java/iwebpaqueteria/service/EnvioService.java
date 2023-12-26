@@ -10,7 +10,7 @@ import iwebpaqueteria.repository.DireccionRepository;
 import iwebpaqueteria.repository.EnvioRepository;
 import iwebpaqueteria.repository.TarifaRepository;
 import iwebpaqueteria.repository.UsuarioRepository;
-import iwebpaqueteria.service.exception.UsuarioServiceException;
+import iwebpaqueteria.service.exception.EnvioServiceException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,14 +60,17 @@ public class EnvioService {
 
     @Transactional
     public EnvioData crearEnvio(float peso, int bultos, String observaciones, Long tiendaId, Long direccionDestinoId) {
-        Usuario tienda = usuarioRepository.findById(tiendaId).orElseThrow(() -> new UsuarioServiceException("Tienda con ID " + tiendaId + " no existe"));
-        Direccion direccionDestino = direccionRepository.findById(direccionDestinoId).orElseThrow(() -> new UsuarioServiceException("Direccion con ID " + direccionDestinoId + " no existe"));
+        Usuario tienda = usuarioRepository.findById(tiendaId).orElseThrow(() -> new EnvioServiceException("Tienda con ID " + tiendaId + " no existe"));
+        Direccion direccionDestino = direccionRepository.findById(direccionDestinoId).orElseThrow(() -> new EnvioServiceException("Direccion con ID " + direccionDestinoId + " no existe"));
         Direccion direccionOrigen = tienda.getDireccion();
+
+        if(direccionOrigen == null)
+            throw new EnvioServiceException("La tienda no tiene dirección");
 
         float precio = this.calcularCoste(direccionDestino.getCodigoPostal(), bultos);
 
         Envio envio = new Envio(peso, bultos, precio, observaciones, direccionOrigen, direccionDestino);
-        envioRepository.save(envio);
+        envio = envioRepository.save(envio);
 
         return modelMapper.map(envio, EnvioData.class);
     }
@@ -92,7 +95,11 @@ public class EnvioService {
         Tarifa tarifaDistancia = calcularTarifaDistancia(codigoPostal);
         Tarifa tarifaBultos = tarifaRepository.findByNombre("Bultos");
 
-        return tarifaDistancia.getCoste() + tarifaBultos.getCoste() * bultos;
+        float coste = 0;
+        coste += tarifaDistancia != null ? tarifaDistancia.getCoste() : 0;
+        coste += tarifaBultos != null ? tarifaBultos.getCoste() : 0;
+
+        return coste;
     }
 
     @Transactional(readOnly = true)

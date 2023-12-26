@@ -97,6 +97,15 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
+    public UsuarioData findByAPIKey(String key) {
+        Usuario usuario = usuarioRepository.findByAPIKey(key).orElse(null);
+        if (usuario == null) return null;
+        else {
+            return modelMapper.map(usuario, UsuarioData.class);
+        }
+    }
+
+    @Transactional(readOnly = true)
     public List<UsuarioData> getUsuariosRegistrados() {
         List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
         return usuarios.stream().map(usuario -> modelMapper.map(usuario, UsuarioData.class)).collect(Collectors.toList());
