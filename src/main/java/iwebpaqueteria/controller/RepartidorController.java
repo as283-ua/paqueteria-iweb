@@ -7,6 +7,7 @@ import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
 import iwebpaqueteria.dto.LoginData;
 import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.model.Usuario;
+import iwebpaqueteria.service.EnvioService;
 import iwebpaqueteria.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,9 @@ public class RepartidorController {
 
     @Autowired
     UsuarioService usuarioService;
+
+    @Autowired
+    EnvioService envioService;
 
     private void comprobarUsuarioLogeadoWebMaster() {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
@@ -42,6 +46,21 @@ public class RepartidorController {
         model.addAttribute("repartidores", usuarioService.getRepartidoresRegistrados());
 
         return "listadoRepartidores";
+    }
+
+    @GetMapping("/repartidores/{id}")
+    public String detalleRepartidor(@PathVariable(value="id") Long idUsu, Model model, HttpSession session) {
+
+        comprobarUsuarioLogeadoWebMaster();
+
+        if (usuarioService.findById(idUsu) == null)
+            return "redirect:/repartidores";
+
+        model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+        model.addAttribute("repartidor", usuarioService.findById(idUsu));
+        model.addAttribute("envios", envioService.getEnviosRepartidor(idUsu));
+
+        return "detalleRepartidor";
     }
 
     @GetMapping("/repartidores/nuevo")

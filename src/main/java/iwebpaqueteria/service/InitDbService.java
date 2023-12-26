@@ -80,6 +80,7 @@ public class InitDbService {
         Envio envio = new Envio(1, 1, 1, "observaciones", direccionOrigenTienda1, direccionDestino);
         envio.addTarifa(tarifaCortaDistancia);
         envio.addTarifa(tarifaBultos);
+        envio.setRepartidor(repartidor1);
         envioRepository.save(envio);
     }
 

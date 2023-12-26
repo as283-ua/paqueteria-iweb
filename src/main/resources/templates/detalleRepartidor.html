@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Detalle repartidor')"></head>
+
+<div th:replace="NavMenu"></div>
+
+<body>
+<div class="container-fluid">
+
+    <div class="row mt-3">
+        <div class="col">
+            <h2 th:text="${repartidor.nombre}"></h2>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="d-flex justify-content-between pl-3 g-col-3" style="max-width: 400px;">
+        <div style="font-weight: bold;">ID: </div>
+        <div th:text="${repartidor.id}"></div>
+    </div>
+
+    <div class="d-flex justify-content-between pl-3 g-col-3" style="max-width: 400px;">
+        <div style="font-weight: bold;">Email: </div>
+        <div th:text="${repartidor.email}"></div>
+    </div>
+
+    <div class="d-flex justify-content-between pl-3 g-col-3" style="max-width: 400px;">
+        <div style="font-weight: bold;">Nombre: </div>
+        <div th:text="${repartidor.nombre}"></div>
+    </div>
+
+    <div class="d-flex justify-content-between pl-3 g-col-3" style="max-width: 400px;">
+        <div style="font-weight: bold;">Teléfono: </div>
+        <div th:text="${repartidor.telefono}"></div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Peso</th>
+                    <th>Observaciones</th>
+                    <th>Destino: CP</th>
+                    <th>Destino: Calle</th>
+                    <th th:if="${usuario.rol.nombre == 'webmaster' || usuario.rol.nombre == 'tienda'}">Precio</th>
+                    <th>Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="envio: ${envios}">
+                    <td th:text="${envio.id}"></td>
+                    <td th:text="${envio.peso}"></td>
+                    <td th:text="${envio.observaciones}"></td>
+                    <td th:text="${envio.direccionDestino.codigoPostal}"></td>
+                    <td th:text="${envio.direccionDestino.calle}"></td>
+                    <td th:if="${usuario.rol.nombre == 'webmaster' || usuario.rol.nombre == 'tienda'}" th:text="${envio.precio}"></td>
+                    <td>
+                        <a class="btn btn-warning" th:href="'/envios/' + ${envio.id}">Ver detalles</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a class="btn btn-danger" href="/repartidores">Volver</a>
+
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>

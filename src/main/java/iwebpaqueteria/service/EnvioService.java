@@ -9,6 +9,7 @@ import iwebpaqueteria.model.Usuario;
 import iwebpaqueteria.repository.DireccionRepository;
 import iwebpaqueteria.repository.EnvioRepository;
 import iwebpaqueteria.repository.TarifaRepository;
+import iwebpaqueteria.repository.UsuarioRepository;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,12 +34,24 @@ public class EnvioService {
     @Autowired
     private TarifaRepository tarifaRepository;
     @Autowired
+    private UsuarioRepository usuarioRepository;
+    @Autowired
     private ModelMapper modelMapper;
 
     @Transactional(readOnly = true)
     public List<EnvioData> findAll() {
         logger.debug("Buscando todos los envíos");
         List<Envio> envios = (List<Envio>) envioRepository.findAll();
+        return envios.stream()
+                .map(envio -> modelMapper.map(envio, EnvioData.class))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<EnvioData> getEnviosRepartidor(Long idUsu) {
+        logger.debug("Buscando todos los envíos del repartidor con id " + idUsu);
+        Usuario repartidor = usuarioRepository.findById(idUsu).orElse(null);
+        Set<Envio> envios = repartidor.getEnvios();
         return envios.stream()
                 .map(envio -> modelMapper.map(envio, EnvioData.class))
                 .collect(Collectors.toList());
