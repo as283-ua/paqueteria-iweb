@@ -2,18 +2,18 @@ package iwebpaqueteria.controller;
 
 import iwebpaqueteria.authentication.ManagerUserSession;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
+import iwebpaqueteria.dto.EnvioDireccionData;
+import iwebpaqueteria.dto.LoginData;
 import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.service.UsuarioService;
 import iwebpaqueteria.service.EnvioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -62,5 +62,11 @@ public class EnvioController {
         model.addAttribute("tarifas", envioService.tarifasDeEnvio(idEnvio));
 
         return "detalleEnvio";
+    }
+
+    @PostMapping(value = "/envios", consumes = "application/json", produces = "application/json")
+    @ResponseBody
+    public String crearEnvio(@Valid @RequestBody EnvioDireccionData envioDireccionData) {
+        return "OK";
     }
 }
