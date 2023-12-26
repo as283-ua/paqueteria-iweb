@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Alta repartidor')"></head>
+
+<div th:replace="NavMenu"></div>
+
+<body>
+<div class="container-fluid">
+
+    <div class="row justify-content-center mb-3">
+        <div class="col-auto">
+            <h2>Alta repartidor</h2>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-6">
+            <form method="post" th:action="@{/repartidores/nuevo}" th:object="${repartidor}">
+                <div class="row justify-content-center">
+                    <div class="col-6">
+                        <div class="form-group">
+                            <label for="email">Correo electronico</label>
+                            <input id="email" class="form-control" name="email" placeholder="Correo electrónico" type="text" th:field="*{email}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input id="nombre" class="form-control" name="password"  placeholder="Nombre" type="text" th:field="*{nombre}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Telefono</label>
+                            <input id="telefono" class="form-control" name="telefono"  placeholder="Nombre" type="text" th:field="*{telefono}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Contraseña</label>
+                            <input id="password" class="form-control" name="password"  placeholder="Contraseña" type="password" th:field="*{contrasenya}" required/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Dar de alta</button>
+            </form>
+        </div>
+    </div>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-6">
+            <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>

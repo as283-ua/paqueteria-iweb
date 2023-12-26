@@ -35,6 +35,10 @@ public class EnvioController {
             throw new UsuarioNoLogeadoException();
     }
 
+    @GetMapping("/")
+    public String about() {
+        return "buscarEnvio";
+    }
 
     @GetMapping("/envios")
     public String listadoEnvios(Model model, HttpSession session) {

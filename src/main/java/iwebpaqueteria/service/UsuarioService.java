@@ -2,6 +2,7 @@ package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.model.Usuario;
+import iwebpaqueteria.repository.RolRepository;
 import iwebpaqueteria.repository.UsuarioRepository;
 import iwebpaqueteria.service.exception.UsuarioServiceException;
 import org.modelmapper.ModelMapper;
@@ -24,6 +25,10 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private RolRepository rolRepository;
+
     @Autowired
     private ModelMapper modelMapper;
 
@@ -39,11 +44,8 @@ public class UsuarioService {
         }
     }
 
-    // Se añade un usuario en la aplicación.
-    // El email y password del usuario deben ser distinto de null
-    // El email no debe estar registrado en la base de datos
     @Transactional
-    public UsuarioData registrar(UsuarioData usuario) {
+    public UsuarioData registrarRepartidor(UsuarioData usuario) {
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
         if (usuarioBD.isPresent())
             throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
@@ -53,6 +55,24 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene password");
         else {
             Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
+            usuarioNuevo.setRol(rolRepository.findByNombre("repartidor"));
+            usuarioNuevo = usuarioRepository.save(usuarioNuevo);
+            return modelMapper.map(usuarioNuevo, UsuarioData.class);
+        }
+    }
+
+    @Transactional
+    public UsuarioData registrarTienda(UsuarioData usuario) {
+        Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
+        if (usuarioBD.isPresent())
+            throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
+        else if (usuario.getEmail() == null)
+            throw new UsuarioServiceException("El usuario no tiene email");
+        else if (usuario.getContrasenya() == null)
+            throw new UsuarioServiceException("El usuario no tiene password");
+        else {
+            Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
+            usuarioNuevo.setRol(rolRepository.findByNombre("tienda"));
             usuarioNuevo = usuarioRepository.save(usuarioNuevo);
             return modelMapper.map(usuarioNuevo, UsuarioData.class);
         }
@@ -85,7 +105,15 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public List<UsuarioData> getRepartidoresRegistrados() {
         List<Usuario> usuarios = (List<Usuario>) usuarioRepository.findAll();
-        List<Usuario> repartidores = usuarios.stream().filter(usuario -> usuario.getRol().getNombre().equals("repartidor")).collect(Collectors.toList());
+        List<Usuario> repartidores = usuarios.stream().filter(usuario -> "repartidor".equals(usuario.getRol().getNombre())).collect(Collectors.toList());
         return repartidores.stream().map(repartidor -> modelMapper.map(repartidor, UsuarioData.class)).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void borrarUsuario(Long id) {
+        Optional<Usuario> usuarioBD = usuarioRepository.findById(id);
+        if (usuarioBD.isPresent()){
+            usuarioRepository.delete(usuarioBD.get());
+        }
     }
 }
