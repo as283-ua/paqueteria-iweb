@@ -22,6 +22,7 @@ Body:
 {
   "peso": int,
   "observaciones": string,
+  "bultos": int,
   "destino": {
     "codigoPostal": string,
     "localidad": string,

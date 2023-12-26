@@ -50,13 +50,6 @@ public class InitDbService {
         usuario.setRol(webmaster);
         usuarioRepository.save(usuario);
 
-        Usuario tienda1 = new Usuario("tienda1@ua");
-        tienda1.setNombre("Tienda 1");
-        tienda1.setContrasenya("123");
-        tienda1.setTelefono("234567891");
-        tienda1.setRol(tienda);
-        usuarioRepository.save(tienda1);
-
         Usuario repartidor1 = new Usuario("repartidor1@ua");
         repartidor1.setNombre("Repartidor 1");
         repartidor1.setContrasenya("123");
@@ -65,14 +58,23 @@ public class InitDbService {
         usuarioRepository.save(repartidor1);
 
         Direccion direccionOrigenTienda1 = new Direccion("0300", "San Vicente", "Alicante", 1, 0, "Calle Alberto", "234567891", "Tienda 1");
-        direccionRepository.save(direccionOrigenTienda1);
+//        direccionOrigenTienda1 = direccionRepository.save(direccionOrigenTienda1);
+
+        Usuario tienda1 = new Usuario("tienda1@ua");
+        tienda1.setNombre("Tienda 1");
+        tienda1.setContrasenya("123");
+        tienda1.setTelefono("234567891");
+        tienda1.setRol(tienda);
+        tienda1.setAPIKey("123456789");
+        tienda1.setDireccion(direccionOrigenTienda1);
+        tienda1 = usuarioRepository.save(tienda1);
 
         Direccion direccionDestino = new Direccion("0300", "San Vicente", "Alicante", 2, 1, "Calle Vista", "0000000", "Juan Carlos");
         direccionRepository.save(direccionDestino);
 
-        Tarifa tarifaCortaDistancia = new Tarifa("Corta Distancia", 1);
+        Tarifa tarifaCortaDistancia = new Tarifa("Corta distancia", 1);
         tarifaRepository.save(tarifaCortaDistancia);
-        Tarifa tarifaLargaDistancia = new Tarifa("Larga Distancia", 2);
+        Tarifa tarifaLargaDistancia = new Tarifa("Larga distancia", 2);
         tarifaRepository.save(tarifaLargaDistancia);
         Tarifa tarifaBultos = new Tarifa("Bultos", 1);
         tarifaRepository.save(tarifaBultos);

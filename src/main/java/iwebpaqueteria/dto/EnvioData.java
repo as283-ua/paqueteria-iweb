@@ -2,7 +2,9 @@ package iwebpaqueteria.dto;
 
 
 import iwebpaqueteria.model.Direccion;
+import iwebpaqueteria.model.HistoricoId;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,13 +14,13 @@ public class EnvioData {
     private Float peso;
     private Float precio;
     private String observaciones;
-    private List<Long> tarifasIds;
+    private List<Long> tarifasIds = new ArrayList<>();
     private Long direccionOrigenId;
     private Long direccionDestinoId;
     private Long repartidorId;
-    private List<Long> historicosIds;
-    private Direccion direccionOrigen;
-    private Direccion direccionDestino;
+    private List<HistoricoId> historicosIds = new ArrayList<>();
+
+    private int bultos;
 
 // Getters y setters
 
@@ -54,17 +56,17 @@ public class EnvioData {
 
     public void setRepartidorId(Long repartidorId) { this.repartidorId = repartidorId; }
 
-    public List<Long> getHistoricosIds() { return historicosIds; }
+    public List<HistoricoId> getHistoricosIds() { return historicosIds; }
 
-    public void setHistoricosIds(List<Long> historicosIds) { this.historicosIds = historicosIds; }
+    public void setHistoricosIds(List<HistoricoId> historicosIds) { this.historicosIds = historicosIds; }
 
-    public Direccion getDireccionOrigen() { return direccionOrigen; }
+    public int getBultos() {
+        return bultos;
+    }
 
-    public void setDireccionOrigen(Direccion direccionOrigen) { this.direccionOrigen = direccionOrigen; }
-
-    public Direccion getDireccionDestino() { return direccionDestino; }
-
-    public void setDireccionDestino(Direccion direccionDestino) { this.direccionDestino = direccionDestino; }
+    public void setBultos(int bultos) {
+        this.bultos = bultos;
+    }
 
     // Sobreescribimos equals y hashCode para que dos usuarios sean iguales
     // si tienen el mismo ID (ignoramos el resto de atributos)

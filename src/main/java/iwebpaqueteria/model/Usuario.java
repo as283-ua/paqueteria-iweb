@@ -31,7 +31,8 @@ public class Usuario {
 
     private String APIKey;
 
-    @OneToOne(mappedBy = "usuario")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "direccion_id", referencedColumnName = "id")
     private Direccion direccion;
 
     @ManyToOne

@@ -4,6 +4,7 @@ import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.model.Usuario;
 import iwebpaqueteria.repository.RolRepository;
 import iwebpaqueteria.repository.UsuarioRepository;
+import iwebpaqueteria.service.exception.UsuarioServiceException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +90,15 @@ public class UsuarioService {
     @Transactional(readOnly = true)
     public UsuarioData findById(Long usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId).orElse(null);
+        if (usuario == null) return null;
+        else {
+            return modelMapper.map(usuario, UsuarioData.class);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public UsuarioData findByAPIKey(String key) {
+        Usuario usuario = usuarioRepository.findByAPIKey(key).orElse(null);
         if (usuario == null) return null;
         else {
             return modelMapper.map(usuario, UsuarioData.class);

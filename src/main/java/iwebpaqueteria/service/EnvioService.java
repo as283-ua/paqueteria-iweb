@@ -10,6 +10,7 @@ import iwebpaqueteria.repository.DireccionRepository;
 import iwebpaqueteria.repository.EnvioRepository;
 import iwebpaqueteria.repository.TarifaRepository;
 import iwebpaqueteria.repository.UsuarioRepository;
+import iwebpaqueteria.service.exception.EnvioServiceException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public class EnvioService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private ModelMapper modelMapper;
+
 
     @Transactional(readOnly = true)
     public List<EnvioData> findAll() {
@@ -68,22 +70,19 @@ public class EnvioService {
     }
 
     @Transactional
-    public EnvioData crearEnvio(float peso, int bultos, String observaciones, Usuario tienda, Direccion direccionDestino) {
-        logger.debug("Creación de envío de la tienda " + tienda.getId() + " a dirección destino " + direccionDestino.getId());
-
-        if (tienda == null || direccionDestino == null) {
-            throw new IllegalArgumentException("No se ha podido crear el envío");
-        }
-
-        float precio = calcularCoste(direccionDestino.getCodigoPostal(), bultos);
+    public EnvioData crearEnvio(float peso, int bultos, String observaciones, Long tiendaId, Long direccionDestinoId) {
+        Usuario tienda = usuarioRepository.findById(tiendaId).orElseThrow(() -> new EnvioServiceException("Tienda con ID " + tiendaId + " no existe"));
+        Direccion direccionDestino = direccionRepository.findById(direccionDestinoId).orElseThrow(() -> new EnvioServiceException("Direccion con ID " + direccionDestinoId + " no existe"));
         Direccion direccionOrigen = tienda.getDireccion();
-        Tarifa tarifaDistancia = calcularTarifaDistancia(direccionDestino.getCodigoPostal());
-        Tarifa tarifaBultos = tarifaRepository.findByNombre("Bultos");
+
+        if(direccionOrigen == null)
+            throw new EnvioServiceException("La tienda no tiene dirección");
+
+        float precio = this.calcularCoste(direccionDestino.getCodigoPostal(), bultos);
 
         Envio envio = new Envio(peso, bultos, precio, observaciones, direccionOrigen, direccionDestino);
-        envio.addTarifa(tarifaDistancia);
-        envio.addTarifa(tarifaBultos);
-        envioRepository.save(envio);
+        envio = envioRepository.save(envio);
+
         return modelMapper.map(envio, EnvioData.class);
     }
 
@@ -107,7 +106,11 @@ public class EnvioService {
         Tarifa tarifaDistancia = calcularTarifaDistancia(codigoPostal);
         Tarifa tarifaBultos = tarifaRepository.findByNombre("Bultos");
 
-        return tarifaDistancia.getCoste() + tarifaBultos.getCoste() * bultos;
+        float coste = 0;
+        coste += tarifaDistancia != null ? tarifaDistancia.getCoste() : 0;
+        coste += tarifaBultos != null ? tarifaBultos.getCoste() : 0;
+
+        return coste;
     }
 
     @Transactional(readOnly = true)
