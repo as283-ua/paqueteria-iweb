@@ -11,7 +11,7 @@ import javax.annotation.PostConstruct;
 @Service
 // Se ejecuta solo si el perfil activo es 'dev'
 @Profile("dev")
-public class InitDbService {
+public class InitDbDevService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -24,11 +24,31 @@ public class InitDbService {
     private DireccionRepository direccionRepository;
     @Autowired
     private TarifaRepository tarifaRepository;
+    @Autowired
+    private EstadoRepository estadoRepository;
+
+    private void crearEstadoIfNotExists(String nombre){
+        try{
+            Estado estado = new Estado(nombre);
+            estadoRepository.save(estado);
+        } catch(Exception ignored){}
+    }
+
+    private void initEstados(){
+        crearEstadoIfNotExists("En almacén");
+        crearEstadoIfNotExists("Enviado");
+        crearEstadoIfNotExists("En reparto");
+        crearEstadoIfNotExists("Entregado");
+        crearEstadoIfNotExists("Devuelto");
+        crearEstadoIfNotExists("Cancelado");
+    }
 
     // Se ejecuta tras crear el contexto de la aplicación
     // para inicializar la base de datos
     @PostConstruct
     public void initDatabase() {
+        initEstados();
+
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");
         usuario.setContrasenya("123");
@@ -73,7 +93,7 @@ public class InitDbService {
         direccionRepository.save(direccionDestino);
 
         Tarifa tarifaCortaDistancia = new Tarifa("Corta distancia", 1);
-        tarifaRepository.save(tarifaCortaDistancia);
+        tarifaCortaDistancia = tarifaRepository.save(tarifaCortaDistancia);
         Tarifa tarifaLargaDistancia = new Tarifa("Larga distancia", 2);
         tarifaRepository.save(tarifaLargaDistancia);
         Tarifa tarifaBultos = new Tarifa("Bultos", 1);

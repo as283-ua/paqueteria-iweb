@@ -2,6 +2,7 @@ package iwebpaqueteria.model;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.cfg.NotYetImplementedException;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -141,6 +142,7 @@ public class Envio implements Serializable {
         throw new NotYetImplementedException();
     }
 
+    @Transactional
     public void addTarifa(Tarifa tarifa) {
         if(tarifas.contains(tarifa)) return;
         this.tarifas.add(tarifa);
@@ -149,6 +151,7 @@ public class Envio implements Serializable {
         }
     }
 
+    @Transactional
     public void removeTarifa(Tarifa tarifa) {
         if(!tarifas.contains(tarifa)) return;
         this.tarifas.remove(tarifa);

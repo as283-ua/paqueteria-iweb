@@ -14,10 +14,18 @@ public class Estado {
     private int id;
 
     @NotNull
+    @Column(unique = true)
     private String nombre;
 
     @OneToMany(mappedBy = "estado")
     private Set<Historico> historicos = new HashSet<>();
+
+    public Estado() {
+    }
+
+    public Estado(String nombre) {
+        this.nombre = nombre;
+    }
 
     public int getId() {
         return id;

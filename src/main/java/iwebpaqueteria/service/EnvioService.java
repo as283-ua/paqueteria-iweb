@@ -94,9 +94,11 @@ public class EnvioService {
         // Comprobamos que el código postal empieza con 03
         Tarifa tarifa = null;
         if (codigoPostal.startsWith("03")) {
-            tarifa = tarifaRepository.findByNombre("Corta distancia");
+            tarifa = tarifaRepository.findByNombre("Corta distancia")
+                    .orElseThrow(() -> new EnvioServiceException("No existe la tarifa corta distancia"));
         }else {
-            tarifa = tarifaRepository.findByNombre("Larga distancia");
+            tarifa = tarifaRepository.findByNombre("Larga distancia")
+                    .orElseThrow(() -> new EnvioServiceException("No existe la tarifa larga distancia"));
         }
         return tarifa;
     }
@@ -105,7 +107,8 @@ public class EnvioService {
     public Float calcularCoste(String codigoPostal, int bultos){
         logger.debug("Cálculo de coste de envío");
         Tarifa tarifaDistancia = calcularTarifaDistancia(codigoPostal);
-        Tarifa tarifaBultos = tarifaRepository.findByNombre("Bultos");
+        Tarifa tarifaBultos = tarifaRepository.findByNombre("Bultos")
+                .orElseThrow(() -> new EnvioServiceException("No existe la tarifa bultos"));
 
         float coste = 0;
         coste += tarifaDistancia != null ? tarifaDistancia.getCoste() : 0;
