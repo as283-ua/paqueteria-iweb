@@ -42,7 +42,7 @@ Devuelve:
 
 ```
 {
-  "id": int
+  "codigo": string
 }
 ```
 
@@ -142,9 +142,9 @@ Status:
 
 - 401: API key no identificada o vacía.
 ## GET. Mostrar datos e histórico de envío (público)
-Ruta: GET `/envios/{id}`
+Ruta: GET `/envios/{codigo}`
 Parametros:
-- id: `int`. Id del envío.
+- codigo: `string`. Código UUID que identifica al envío.
 
 Status:
 - 200: Devuelve datos básicos de envío:

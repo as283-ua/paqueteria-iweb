@@ -109,14 +109,14 @@ public class EnvioController {
         }
 
         DireccionData destino = direccionService.crearDireccion(envioDireccionData.getDestino());
-
+        EnvioData envio;
         try{
-            envioService.crearEnvio(envioDireccionData.getPeso(), envioDireccionData.getBultos(), envioDireccionData.getObservaciones(), tienda.getId(), destino.getId());
+            envio = envioService.crearEnvio(envioDireccionData.getPeso(), envioDireccionData.getBultos(), envioDireccionData.getObservaciones(), tienda.getId(), destino.getId());
         } catch (EnvioServiceException e){
             throw new EnvioIncorrectoException(e.getMessage());
         }
 
-        response.put("id", tienda.getId());
+        response.put("codigo", envio.getCodigo());
         return response;
     }
 
