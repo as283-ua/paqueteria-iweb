@@ -63,6 +63,7 @@ public class TestTodo {
         direccion.setPlanta(1);
         direccion.setCalle("Calle");
         direccion.setTelefono("123456789");
+        direccion.setNombre("a");
 
         direccion = direccionRepository.save(direccion);
 

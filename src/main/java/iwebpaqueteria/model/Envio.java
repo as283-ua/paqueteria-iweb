@@ -1,5 +1,6 @@
 package iwebpaqueteria.model;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.cfg.NotYetImplementedException;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.UUID;
 
 @Entity
 @Table(name = "envios")
@@ -50,6 +52,9 @@ public class Envio implements Serializable {
 
     @OneToMany(mappedBy = "envio")
     private Set<Historico> historicos = new HashSet<>();
+
+    @Column(unique = true)
+    private String codigo = UUID.randomUUID().toString().replace("-", "");
 
     public Envio() {}
 
@@ -150,6 +155,14 @@ public class Envio implements Serializable {
         if(tarifa.getEnvios().contains(this)) {
             tarifa.removeEnvio(this);
         }
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     @Override
