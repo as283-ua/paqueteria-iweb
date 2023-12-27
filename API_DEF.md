@@ -92,11 +92,11 @@ Status:
 - 401: API key no identificada o vacía.
 
 ## POST. Cancelar envío
-Ruta: POST `/envios/{id}/historico/cancelar`
+Ruta: POST `/envios/{codigo}/historico/cancelar`
 
 Parametros:
-- id: `int`. Id del envío a cancelar.
-- header `authorization`, `ApiKey: string`
+- codigo: `string`. Código del envío a cancelar.
+- header `Authorization`, `ApiKey: string`
 
 Status:
 - 204: En el histórico del envío se añade un nuevo estado: "Cancelado".

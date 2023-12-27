@@ -57,6 +57,14 @@ public class EnvioController {
         }
     }
 
+    private UsuarioData validarApikey(String apiKey){
+        UsuarioData usuario = usuarioService.findByAPIKey(apiKey);
+        if (usuario == null) {
+            throw new UsuarioNoLogeadoException();
+        }
+        return usuario;
+    }
+
     @GetMapping("/")
     public String about() {
         return "buscarEnvio";
@@ -102,11 +110,7 @@ public class EnvioController {
     public Map<String, Object> crearEnvio(@Valid @RequestBody EnvioDireccionData envioDireccionData, @RequestHeader("Authorization") String apiKey) {
         Map<String, Object> response = new HashMap<>();
 
-        UsuarioData tienda= usuarioService.findByAPIKey(apiKey);
-        if (tienda == null) {
-            response.put("error", "API Key no válida");
-            return response;
-        }
+        UsuarioData tienda = validarApikey(apiKey);
 
         DireccionData destino = direccionService.crearDireccion(envioDireccionData.getDestino());
         EnvioData envio;
@@ -118,6 +122,18 @@ public class EnvioController {
 
         response.put("codigo", envio.getCodigo());
         return response;
+    }
+
+    @PostMapping("/envios/{codigo}/historico/cancelar")
+    @ResponseBody
+    public void cancelarEnvío(@PathVariable(value="codigo") String codigoEnvio, @RequestHeader("Authorization") String apiKey) {
+        UsuarioData tienda = validarApikey(apiKey);
+
+        try{
+            envioService.cancelarEnvio(codigoEnvio);
+        } catch (EnvioServiceException e){
+            throw new EnvioIncorrectoException(e.getMessage());
+        }
     }
 
     @PostMapping("/envios/{id}/repartidor")

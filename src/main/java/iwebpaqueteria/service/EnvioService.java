@@ -153,4 +153,6 @@ public class EnvioService {
         envioRepository.save(envio);
     }
 
+    public void cancelarEnvio(String codigoEnvio) {
+    }
 }
