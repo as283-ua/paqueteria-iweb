@@ -19,8 +19,8 @@ public class EnvioData {
     private Long direccionDestinoId;
     private Long repartidorId;
     private List<HistoricoId> historicosIds = new ArrayList<>();
-
     private int bultos;
+    private String codigo;
 
 // Getters y setters
 
@@ -66,6 +66,14 @@ public class EnvioData {
 
     public void setBultos(int bultos) {
         this.bultos = bultos;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     // Sobreescribimos equals y hashCode para que dos usuarios sean iguales
