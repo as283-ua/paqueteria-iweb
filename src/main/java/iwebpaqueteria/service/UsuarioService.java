@@ -1,6 +1,8 @@
 package iwebpaqueteria.service;
 
+import iwebpaqueteria.dto.DireccionData;
 import iwebpaqueteria.dto.UsuarioData;
+import iwebpaqueteria.model.Direccion;
 import iwebpaqueteria.model.Rol;
 import iwebpaqueteria.model.Usuario;
 import iwebpaqueteria.repository.RolRepository;
@@ -87,7 +89,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public UsuarioData registrarTienda(UsuarioData usuario) {
+    public UsuarioData registrarTienda(UsuarioData usuario, DireccionData direccion) {
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
         if (usuarioBD.isPresent())
             throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
@@ -97,10 +99,15 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene password");
         else {
             Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
-            Rol rol = rolRepository.findByNombre("tienda").orElse(null);
+            Rol rol = rolRepository.findByNombre("tienda").
+                    orElseThrow(() -> new UsuarioServiceException("No existe el rol tienda"));
 
             usuarioNuevo.setRol(rol);
             usuarioNuevo.setAPIKey(generarApiKey());
+
+            Direccion dir = modelMapper.map(direccion, Direccion.class);
+
+            usuarioNuevo.setDireccion(dir);
 
             usuarioNuevo = usuarioRepository.save(usuarioNuevo);
             return modelMapper.map(usuarioNuevo, UsuarioData.class);

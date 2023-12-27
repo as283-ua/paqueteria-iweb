@@ -1,6 +1,10 @@
 package iwebpaqueteria.model;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import javax.persistence.*;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -15,9 +19,9 @@ public class Historico {
     @Id
     private Long estadoId;
 
-    @Column(insertable = false, updatable = false, nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fecha;
+    @Column(updatable = false)
+    @CreationTimestamp
+    private LocalDateTime fecha;
 
     @ManyToOne
     @MapsId("envioId")
@@ -29,11 +33,21 @@ public class Historico {
     @JoinColumn(name = "estadoId")
     private Estado estado;
 
-    public Date getFecha() {
+    public Historico() {}
+
+    public Historico(Envio envio, Estado estado) {
+        this.envio = envio;
+        this.estado = estado;
+
+        this.envioId = envio.getId();
+        this.estadoId = estado.getId();
+    }
+
+    public LocalDateTime getFecha() {
         return fecha;
     }
 
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 
@@ -51,6 +65,22 @@ public class Historico {
 
     public void setEstado(Estado estado) {
         this.estado = estado;
+    }
+
+    public Long getEnvioId() {
+        return envioId;
+    }
+
+    public void setEnvioId(Long envioId) {
+        this.envioId = envioId;
+    }
+
+    public Long getEstadoId() {
+        return estadoId;
+    }
+
+    public void setEstadoId(Long estadoId) {
+        this.estadoId = estadoId;
     }
 
     @Override

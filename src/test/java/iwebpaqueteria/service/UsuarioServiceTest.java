@@ -1,5 +1,6 @@
 package iwebpaqueteria.service;
 
+import iwebpaqueteria.dto.DireccionData;
 import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.repository.UsuarioRepository;
 import org.junit.jupiter.api.Test;
@@ -24,9 +25,13 @@ public class UsuarioServiceTest {
         tienda.setNombre("123");
         tienda.setTelefono("123123123");
 
-        tienda = usuarioService.registrarTienda(tienda);
+        DireccionData direccion = new DireccionData("03005", "Alicante", "Alicante", 1, 1, "Calle", "123123123", "Tienda");
+
+        tienda = usuarioService.registrarTienda(tienda, direccion);
 
         assertThat(tienda.getAPIKey()).isNotNull();
         assertThat(tienda.getAPIKey()).isNotBlank();
+
+        assertThat(tienda.getDireccion().getCodigoPostal()).isEqualTo("03005");
     }
 }

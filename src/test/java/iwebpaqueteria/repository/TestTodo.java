@@ -32,6 +32,9 @@ public class TestTodo {
     @Autowired
     private DireccionRepository direccionRepository;
 
+    @Autowired
+    private HistoricoRepository historicoRepository;
+
     @Test
     @Transactional
     public void absolutamenteTodoTest(){

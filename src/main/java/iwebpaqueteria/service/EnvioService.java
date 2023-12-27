@@ -2,14 +2,8 @@ package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.TarifaData;
-import iwebpaqueteria.model.Direccion;
-import iwebpaqueteria.model.Envio;
-import iwebpaqueteria.model.Tarifa;
-import iwebpaqueteria.model.Usuario;
-import iwebpaqueteria.repository.DireccionRepository;
-import iwebpaqueteria.repository.EnvioRepository;
-import iwebpaqueteria.repository.TarifaRepository;
-import iwebpaqueteria.repository.UsuarioRepository;
+import iwebpaqueteria.model.*;
+import iwebpaqueteria.repository.*;
 import iwebpaqueteria.service.exception.EnvioServiceException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -39,6 +33,10 @@ public class EnvioService {
     private UsuarioRepository usuarioRepository;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private EstadoRepository estadoRepository;
+    @Autowired
+    private HistoricoRepository historicoRepository;
 
 
     @Transactional(readOnly = true)
@@ -156,6 +154,18 @@ public class EnvioService {
         envioRepository.save(envio);
     }
 
+    @Transactional
     public void cancelarEnvio(String codigoEnvio) {
+        Envio envio = envioRepository.findByCodigo(codigoEnvio).
+                orElseThrow(() -> new EnvioServiceException("No existe envío con código " + codigoEnvio));
+
+        Estado estado = estadoRepository.findByNombre("Cancelado").
+                orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado Cancelado"));
+
+        Historico envioCanceladoH = new Historico(envio, estado);
+
+        envio.addHistorico(envioCanceladoH);
+
+        envioCanceladoH = historicoRepository.save(envioCanceladoH);
     }
 }
