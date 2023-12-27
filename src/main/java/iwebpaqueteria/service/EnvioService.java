@@ -65,7 +65,7 @@ public class EnvioService {
         logger.debug("Buscando envío con id " + id);
         Envio envio =  envioRepository.findById(id).orElse(null);
         if(envio == null)
-            throw new IllegalArgumentException("No existe envío con id " + id);
+            return null;
 
         return modelMapper.map(envio, EnvioData.class);
     }

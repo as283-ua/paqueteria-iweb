@@ -2,6 +2,7 @@ package iwebpaqueteria.controller;
 
 import iwebpaqueteria.authentication.ManagerUserSession;
 import iwebpaqueteria.controller.exception.EnvioIncorrectoException;
+import iwebpaqueteria.controller.exception.EnvioNotFoundException;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
 import iwebpaqueteria.dto.DireccionData;
 import iwebpaqueteria.dto.EnvioDireccionData;
@@ -11,6 +12,7 @@ import iwebpaqueteria.dto.AsignarRepartidorData;
 import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.LoginData;
 import iwebpaqueteria.dto.UsuarioData;
+import iwebpaqueteria.model.Direccion;
 import iwebpaqueteria.service.DireccionService;
 import iwebpaqueteria.model.Envio;
 import iwebpaqueteria.service.UsuarioService;
@@ -88,10 +90,12 @@ public class EnvioController {
     public String detalleEnvio(@PathVariable(value="id") Long idEnvio, Model model, HttpSession session) {
 
         comprobarUsuarioLogeado();
-
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
 
         EnvioData envio = envioService.recuperarEnvio(idEnvio);
+        if(envio==null){
+            throw new EnvioNotFoundException();
+        }
 
         if(envio.getRepartidorId()==null)
             model.addAttribute("asignarRepartidor", new AsignarRepartidorData());
