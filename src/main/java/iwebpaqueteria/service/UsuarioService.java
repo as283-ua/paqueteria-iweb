@@ -1,6 +1,7 @@
 package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.UsuarioData;
+import iwebpaqueteria.model.Rol;
 import iwebpaqueteria.model.Usuario;
 import iwebpaqueteria.repository.RolRepository;
 import iwebpaqueteria.repository.UsuarioRepository;
@@ -55,7 +56,8 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene password");
         else {
             Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
-            usuarioNuevo.setRol(rolRepository.findByNombre("repartidor"));
+            Rol rol = rolRepository.findByNombre("repartidor").orElse(null);
+            usuarioNuevo.setRol(rol);
             usuarioNuevo = usuarioRepository.save(usuarioNuevo);
             return modelMapper.map(usuarioNuevo, UsuarioData.class);
         }
@@ -72,7 +74,8 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene password");
         else {
             Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
-            usuarioNuevo.setRol(rolRepository.findByNombre("tienda"));
+            Rol rol = rolRepository.findByNombre("repartidor").orElse(null);
+            usuarioNuevo.setRol(rol);
             usuarioNuevo = usuarioRepository.save(usuarioNuevo);
             return modelMapper.map(usuarioNuevo, UsuarioData.class);
         }
