@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.annotation.Target;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -131,6 +132,22 @@ public class EnvioService {
                 .map(tarifa -> modelMapper.map(tarifa, TarifaData.class))
                 .map(TarifaData::getNombre)
                 .collect(Collectors.joining(", "));
+    }
+
+    @Transactional
+    public void asignarRepartidor(Long idEnvio, String nombreRepartidor){
+        logger.debug("Asignando repartidor");
+        Envio envio = envioRepository.findById(idEnvio).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + idEnvio);
+
+        Usuario repartidor = usuarioRepository.findByNombre(nombreRepartidor).orElse(null);
+
+        if(repartidor == null)
+            throw new IllegalArgumentException("No existe repartidor con nombre " + nombreRepartidor);
+
+        envio.setRepartidor(repartidor);
+        envioRepository.save(envio);
     }
 
 }

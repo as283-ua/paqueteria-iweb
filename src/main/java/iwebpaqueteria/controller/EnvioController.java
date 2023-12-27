@@ -2,7 +2,12 @@ package iwebpaqueteria.controller;
 
 import iwebpaqueteria.authentication.ManagerUserSession;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
+import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
+import iwebpaqueteria.dto.AsignarRepartidorData;
+import iwebpaqueteria.dto.EnvioData;
+import iwebpaqueteria.dto.LoginData;
 import iwebpaqueteria.dto.UsuarioData;
+import iwebpaqueteria.model.Envio;
 import iwebpaqueteria.service.UsuarioService;
 import iwebpaqueteria.service.EnvioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +40,15 @@ public class EnvioController {
             throw new UsuarioNoLogeadoException();
     }
 
+    private void comprobarUsuarioLogeadoWebMaster() {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado==null)
+            throw new UsuarioNoLogeadoException();
+        if(!"webmaster".equals(usuarioService.findById(idUsuarioLogeado).getRol().getNombre())){
+            throw new UsuarioSinPermisosException();
+        }
+    }
+
     @GetMapping("/")
     public String about() {
         return "buscarEnvio";
@@ -61,10 +75,27 @@ public class EnvioController {
 
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
 
+        EnvioData envio = envioService.recuperarEnvio(idEnvio);
+
+        if(envio.getRepartidorId()==null)
+            model.addAttribute("asignarRepartidor", new AsignarRepartidorData());
+        else
+            model.addAttribute("repartidor", usuarioService.findById(envio.getRepartidorId()).getNombre());
+
         model.addAttribute("usuario", usuario);
-        model.addAttribute("envio", envioService.recuperarEnvio(idEnvio));
+        model.addAttribute("envio", envio);
         model.addAttribute("tarifas", envioService.tarifasDeEnvio(idEnvio));
 
         return "detalleEnvio";
+    }
+
+    @PostMapping("/envios/{id}/repartidor")
+    public String asignarRepartidorEnvio(@PathVariable(value="id") Long idEnvio, @ModelAttribute AsignarRepartidorData asignarRepartidorData, Model model, HttpSession session){
+
+        comprobarUsuarioLogeadoWebMaster();
+
+        envioService.asignarRepartidor(idEnvio, asignarRepartidorData.getNombre());
+
+        return "redirect:/envios/" + idEnvio;
     }
 }
