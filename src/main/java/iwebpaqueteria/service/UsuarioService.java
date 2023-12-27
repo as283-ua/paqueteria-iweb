@@ -13,8 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,6 +35,26 @@ public class UsuarioService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    private Character randomAlphaNumeric(){
+        int num = new Random().nextInt() % 62;
+        num += 48;
+
+        if (num < 58) return (char)num;
+
+        num += 7;
+        if (num < 91) return (char)num;
+
+        num += 6;
+
+        return (char)num;
+    }
+
+    private String generarApiKey(){
+        byte[] array = new byte[32];
+        new SecureRandom().nextBytes(array);
+        return Base64.getEncoder().encodeToString(array).replaceAll("[^a-zA-Z0-9]", randomAlphaNumeric().toString());
+    }
 
     @Transactional(readOnly = true)
     public LoginStatus login(String eMail, String password) {
@@ -74,8 +97,11 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene password");
         else {
             Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
-            Rol rol = rolRepository.findByNombre("repartidor").orElse(null);
+            Rol rol = rolRepository.findByNombre("tienda").orElse(null);
+
             usuarioNuevo.setRol(rol);
+            usuarioNuevo.setAPIKey(generarApiKey());
+
             usuarioNuevo = usuarioRepository.save(usuarioNuevo);
             return modelMapper.map(usuarioNuevo, UsuarioData.class);
         }
