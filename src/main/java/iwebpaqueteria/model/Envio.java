@@ -142,6 +142,14 @@ public class Envio implements Serializable {
         throw new NotYetImplementedException();
     }
 
+    public void addHistorico(Historico historico) {
+        if(historicos.contains(historico)) return;
+        this.historicos.add(historico);
+        if(!historico.getEnvio().equals(this)) {
+            historico.setEnvio(this);
+        }
+    }
+
     @Transactional
     public void addTarifa(Tarifa tarifa) {
         if(tarifas.contains(tarifa)) return;

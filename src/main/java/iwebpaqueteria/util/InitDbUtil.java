@@ -1,7 +1,11 @@
-package iwebpaqueteria.service;
+package iwebpaqueteria.util;
 
-import iwebpaqueteria.model.*;
-import iwebpaqueteria.repository.*;
+import iwebpaqueteria.model.Estado;
+import iwebpaqueteria.model.Rol;
+import iwebpaqueteria.model.Tarifa;
+import iwebpaqueteria.repository.EstadoRepository;
+import iwebpaqueteria.repository.RolRepository;
+import iwebpaqueteria.repository.TarifaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -10,8 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.PostConstruct;
 
 @Service
-@Profile("!dev")
-public class InitDbEssentialService {
+public class InitDbUtil {
     @Autowired
     private RolRepository rolRepository;
     @Autowired
@@ -41,13 +44,13 @@ public class InitDbEssentialService {
         } catch(Exception ignored){}
     }
 
-    private void initRoles(){
+    public void initRoles(){
         crearRolIfNotExists("webmaster");
         crearRolIfNotExists("tienda");
         crearRolIfNotExists("repartidor");
     }
 
-    private void initTarifas(){
+    public void initTarifas(){
         crearTarifaIfNotExists("Corta distancia", 1);
         crearTarifaIfNotExists("Larga distancia", 2);
         crearTarifaIfNotExists("Bultos", 1);

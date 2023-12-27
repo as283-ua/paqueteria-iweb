@@ -124,7 +124,7 @@ public class EnvioController {
         return response;
     }
 
-    @PostMapping("/envios/{codigo}/historico/cancelar")
+    @PostMapping(value = "/envios/{codigo}/historico/cancelar", consumes = "application/json", produces = "application/json")
     @ResponseBody
     public void cancelarEnvío(@PathVariable(value="codigo") String codigoEnvio, @RequestHeader("Authorization") String apiKey) {
         UsuarioData tienda = validarApikey(apiKey);
