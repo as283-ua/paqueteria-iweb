@@ -100,6 +100,8 @@ public class EnvioController {
 
         model.addAttribute("usuario", usuario);
         model.addAttribute("envio", envio);
+        model.addAttribute("direccionOrigen", direccionService.findById(envio.getDireccionOrigenId()));
+        model.addAttribute("direccionDestino", direccionService.findById(envio.getDireccionDestinoId()));
         model.addAttribute("tarifas", envioService.tarifasDeEnvio(idEnvio));
 
         return "detalleEnvio";

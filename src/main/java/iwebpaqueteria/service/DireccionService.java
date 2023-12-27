@@ -28,4 +28,10 @@ public class DireccionService {
         direccion = direccionRepository.save(direccion);
         return modelMapper.map(direccion, DireccionData.class);
     }
+
+    public DireccionData findById(Long id) {
+        logger.debug("Buscando dirección por id");
+        Direccion direccion = direccionRepository.findById(id).orElse(null);
+        return modelMapper.map(direccion, DireccionData.class);
+    }
 }
