@@ -1,6 +1,7 @@
 package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.EnvioData;
+import iwebpaqueteria.dto.EnvioReducidoData;
 import iwebpaqueteria.dto.TarifaData;
 import iwebpaqueteria.model.*;
 import iwebpaqueteria.repository.*;
@@ -161,7 +162,7 @@ public class EnvioService {
     }
 
     @Transactional
-    public void cancelarEnvio(String codigoEnvio) {
+    public void cancelarEnvio(String codigoEnvio, String observaciones) {
         Envio envio = envioRepository.findByCodigo(codigoEnvio).
                 orElseThrow(() -> new EnvioServiceException("No existe envío con código " + codigoEnvio));
 
@@ -169,9 +170,20 @@ public class EnvioService {
                 orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado Cancelado"));
 
         Historico envioCanceladoH = new Historico(envio, estado);
+        envioCanceladoH.setObservaciones(observaciones);
 
         envio.addHistorico(envioCanceladoH);
 
         envioCanceladoH = historicoRepository.save(envioCanceladoH);
+    }
+
+    @Transactional
+    public EnvioReducidoData resumenEnvio(String codigoEnvio) {
+        Envio envio = envioRepository.findByCodigo(codigoEnvio).
+                orElseThrow(() -> new EnvioServiceException("No existe envío con código " + codigoEnvio));
+
+        EnvioReducidoData envioResult = modelMapper.map(envio, EnvioReducidoData.class);
+
+        return envioResult;
     }
 }

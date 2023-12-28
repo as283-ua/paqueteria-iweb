@@ -94,6 +94,13 @@ Status:
 ## POST. Cancelar envío
 Ruta: POST `/envios/{codigo}/historico/cancelar`
 
+Body [opcional]:
+```
+{
+  "observaciones": string
+}
+```
+
 Parametros:
 - codigo: `string`. Código del envío a cancelar.
 - header `Authorization`, `ApiKey: string`
@@ -124,7 +131,7 @@ Status:
 [
   {
     "id": int,
-    "historico": [
+    "historicos": [
       {
         "estado": string,
         "timestamp": timestamp,
@@ -151,8 +158,10 @@ Status:
 
 ```
 {
+  "codigo": string,
   "peso": string,
-  "historico": [
+  "bultos": int,
+  "historicos": [
     {
       "estado": string,
       "timestamp": timestamp,

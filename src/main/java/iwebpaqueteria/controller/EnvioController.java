@@ -139,11 +139,13 @@ public class EnvioController {
 
     @PostMapping(value = "/envios/{codigo}/historico/cancelar", consumes = "application/json", produces = "application/json")
     @ResponseBody
-    public void cancelarEnvío(@PathVariable(value="codigo") String codigoEnvio, @RequestHeader("Authorization") String apiKey) {
+    public void cancelarEnvío(@PathVariable(value="codigo") String codigoEnvio, @RequestHeader("Authorization") String apiKey, @RequestBody Map<String, String> body) {
         UsuarioData tienda = validarApikey(apiKey);
 
+        String observaciones = body.get("observaciones");
+
         try{
-            envioService.cancelarEnvio(codigoEnvio);
+            envioService.cancelarEnvio(codigoEnvio, observaciones);
         } catch (EnvioServiceException e){
             throw new EnvioIncorrectoException(e.getMessage());
         }
