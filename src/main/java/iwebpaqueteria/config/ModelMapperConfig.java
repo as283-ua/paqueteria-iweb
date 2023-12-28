@@ -1,7 +1,10 @@
 package iwebpaqueteria.config;
 
+import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.HistoricoData;
+import iwebpaqueteria.model.Envio;
 import iwebpaqueteria.model.Historico;
+import iwebpaqueteria.model.HistoricoId;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +27,28 @@ public class ModelMapperConfig {
                 historicoData.setObservaciones(historico.getObservaciones());
                 historicoData.setEstado(historico.getEstado().getNombre());
                 return historicoData;
+            }
+        });
+
+        modelMapper.addConverter(new AbstractConverter<Envio, EnvioData>() {
+            @Override
+            protected EnvioData convert(Envio envio) {
+                EnvioData envioData = new EnvioData();
+                envioData.setCodigo(envio.getCodigo());
+                envioData.setBultos(envio.getBultos());
+                envioData.setDireccionDestinoId(envio.getDireccionDestino().getId());
+                envioData.setDireccionOrigenId(envio.getDireccionOrigen().getId());
+                envioData.setHistoricoIds(envio.getHistoricos().stream().
+                        map(historico -> new HistoricoId(historico.getEnvioId(), historico.getEstadoId())).
+                        collect(java.util.stream.Collectors.toList()));
+                envioData.setId(envio.getId());
+                envioData.setObservaciones(envio.getObservaciones());
+                envioData.setPeso(envio.getPeso());
+                envioData.setPrecio(envio.getPrecio());
+
+                envioData.setRepartidorId(envio.getRepartidor() == null ? null : envio.getRepartidor().getId());
+                envioData.setTarifasIds(envio.getTarifas().stream().map(tarifa -> tarifa.getId()).collect(java.util.stream.Collectors.toList()));
+                return envioData;
             }
         });
 

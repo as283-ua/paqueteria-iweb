@@ -71,6 +71,7 @@ public class EnvioService {
 
     @Transactional
     public EnvioData crearEnvio(float peso, int bultos, String observaciones, Long tiendaId, Long direccionDestinoId) {
+        logger.debug("Creando envío");
         Usuario tienda = usuarioRepository.findById(tiendaId).orElseThrow(() -> new EnvioServiceException("Tienda con ID " + tiendaId + " no existe"));
         Direccion direccionDestino = direccionRepository.findById(direccionDestinoId).orElseThrow(() -> new EnvioServiceException("Direccion con ID " + direccionDestinoId + " no existe"));
         Direccion direccionOrigen = tienda.getDireccion();
@@ -87,9 +88,11 @@ public class EnvioService {
                 orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado En almacén"));
 
         Historico envioEnAlmacenH = new Historico(envio, estado);
-        historicoRepository.save(envioEnAlmacenH);
 
-        return modelMapper.map(envio, EnvioData.class);
+        envioEnAlmacenH = historicoRepository.save(envioEnAlmacenH);
+        EnvioData envioDTO = modelMapper.map(envio, EnvioData.class);
+
+        return envioDTO;
     }
 
     @Transactional(readOnly = true)
@@ -163,6 +166,7 @@ public class EnvioService {
 
     @Transactional
     public void cancelarEnvio(String codigoEnvio, String observaciones) {
+        logger.debug("Cancelando envío");
         Envio envio = envioRepository.findByCodigo(codigoEnvio).
                 orElseThrow(() -> new EnvioServiceException("No existe envío con código " + codigoEnvio));
 
@@ -171,8 +175,6 @@ public class EnvioService {
 
         Historico envioCanceladoH = new Historico(envio, estado);
         envioCanceladoH.setObservaciones(observaciones);
-
-        envio.addHistorico(envioCanceladoH);
 
         envioCanceladoH = historicoRepository.save(envioCanceladoH);
     }

@@ -39,7 +39,9 @@ public class Historico {
 
     public Historico(Envio envio, Estado estado) {
         this.envio = envio;
+        envio.addHistorico(this);
         this.estado = estado;
+        estado.getHistoricos().add(this);
 
         this.envioId = envio.getId();
         this.estadoId = estado.getId();

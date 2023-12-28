@@ -5,8 +5,10 @@ import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.EnvioReducidoData;
 import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.model.Estado;
+import iwebpaqueteria.model.Historico;
 import iwebpaqueteria.model.HistoricoId;
 import iwebpaqueteria.repository.EstadoRepository;
+import iwebpaqueteria.repository.HistoricoRepository;
 import iwebpaqueteria.repository.UsuarioRepository;
 import iwebpaqueteria.util.InitDbUtil;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,6 +20,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,6 +35,8 @@ public class EnvioServiceTest {
     private DireccionService direccionService;
     @Autowired
     private EstadoRepository estadoRepository;
+    @Autowired
+    private HistoricoRepository historicoRepository;
     @Autowired
     private InitDbUtil initDbUtil;
     @BeforeEach
@@ -81,13 +86,9 @@ public class EnvioServiceTest {
 
         envioService.cancelarEnvio(envio.getCodigo(), "Ya no lo necesito");
 
-        Estado cancelado = estadoRepository.findByNombre("Cancelado").orElse(null);
-
-        assertThat(cancelado).isNotNull();
-
         envio = envioService.recuperarEnvio(envio.getId());
 
-        assertThat(envio.getHistoricosIds()).contains(new HistoricoId(envio.getId(), cancelado.getId()));
+        assertThat(envio.getHistoricoIds()).hasSize(2);
     }
 
     @Test

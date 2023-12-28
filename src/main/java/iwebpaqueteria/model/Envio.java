@@ -84,7 +84,7 @@ public class Envio implements Serializable {
         this.peso = peso;
     }
 
-    public float getBultos() {
+    public int getBultos() {
         return bultos;
     }
 
@@ -139,7 +139,7 @@ public class Envio implements Serializable {
     }
 
     public void setHistoricos(Set<Historico> historicos) {
-        throw new NotYetImplementedException();
+        this.historicos = historicos;
     }
 
     public void addHistorico(Historico historico) {
