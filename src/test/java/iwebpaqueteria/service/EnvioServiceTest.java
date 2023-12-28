@@ -78,7 +78,7 @@ public class EnvioServiceTest {
 
         EnvioData envio = envioService.crearEnvio(50f, 1, "Ninguna observación", tienda.getId(), direccionDestino.getId());
 
-        envioService.cancelarEnvio(envio.getCodigo());
+        envioService.cancelarEnvio(envio.getCodigo(), null);
 
         Estado cancelado = estadoRepository.findByNombre("Cancelado").orElse(null);
 

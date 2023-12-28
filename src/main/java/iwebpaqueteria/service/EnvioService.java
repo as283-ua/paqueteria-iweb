@@ -161,7 +161,7 @@ public class EnvioService {
     }
 
     @Transactional
-    public void cancelarEnvio(String codigoEnvio) {
+    public void cancelarEnvio(String codigoEnvio, String observaciones) {
         Envio envio = envioRepository.findByCodigo(codigoEnvio).
                 orElseThrow(() -> new EnvioServiceException("No existe envío con código " + codigoEnvio));
 
@@ -169,6 +169,7 @@ public class EnvioService {
                 orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado Cancelado"));
 
         Historico envioCanceladoH = new Historico(envio, estado);
+        envioCanceladoH.setObservaciones(observaciones);
 
         envio.addHistorico(envioCanceladoH);
 
