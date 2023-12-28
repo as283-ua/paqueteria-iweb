@@ -148,7 +148,7 @@ public class EnvioService {
         Usuario repartidor = usuarioRepository.findByNombre(nombreRepartidor).orElse(null);
 
         if(repartidor == null)
-            throw new IllegalArgumentException("No existe repartidor con nombre " + nombreRepartidor);
+            throw new IllegalArgumentException("No existe un repartidor con ese nombre");
 
         envio.setRepartidor(repartidor);
         envioRepository.save(envio);

@@ -161,4 +161,13 @@ public class UsuarioService {
             usuarioRepository.delete(usuarioBD.get());
         }
     }
+
+    @Transactional
+    public List<String> buscarRepartidor(String texto) {
+        List<Usuario> usuarios = usuarioRepository.findAllByNombreIgnoreCaseStartsWith(texto).orElse(null);
+        if(usuarios == null)
+            return null;
+
+        return usuarios.stream().filter(usuario -> "repartidor".equals(usuario.getRol().getNombre())).collect(Collectors.toList()).stream().map(Usuario::getNombre).collect(Collectors.toList());
+    }
 }
