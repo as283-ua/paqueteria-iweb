@@ -70,12 +70,14 @@ public class InitDbDevService {
         usuario.setRol(webmaster);
         usuarioRepository.save(usuario);
 
-        Usuario repartidor1 = new Usuario("repartidor1@ua");
-        repartidor1.setNombre("Repartidor 1");
-        repartidor1.setContrasenya("123");
-        repartidor1.setTelefono("345678912");
-        repartidor1.setRol(repartidor);
-        usuarioRepository.save(repartidor1);
+        for(int i=0; i<15; i++) {
+            Usuario rep = new Usuario("repartidor" + i + "@ua");
+            rep.setNombre("Repartidor " + i);
+            rep.setContrasenya("123");
+            rep.setTelefono("345678912" + i);
+            rep.setRol(repartidor);
+            usuarioRepository.save(rep);
+        }
 
         Direccion direccionOrigenTienda1 = new Direccion("0300", "San Vicente", "Alicante", 1, 0, "Calle Alberto", "234567891", "Tienda 1");
 //        direccionOrigenTienda1 = direccionRepository.save(direccionOrigenTienda1);

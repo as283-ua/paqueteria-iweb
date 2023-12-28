@@ -19,11 +19,16 @@
         <form method="post" th:action="@{/envios/{id}/repartidor(id=${envio.id})}" th:object="${asignarRepartidor}">
             <div class="row ml-1 mt-3">
                 <div class="form-group">
-                    <input id="nombre" class="form-control" name="nombre" placeholder="Nombre" type="text" th:field="*{nombre}" required style="height: 38px; width: 300px;"/>
+                    <input id="nombre" class="form-control" name="nombre" placeholder="Nombre" type="text" th:field="*{nombre}" required style="height: 38px; width: 300px;" autocomplete="off" oninput="buscarRepartidores(this.value)"/>
+                    <div id="sugerencias" class="sugerencias"></div>
                 </div>
                 <button type="submit" class="ml-3 btn btn-primary" style="height: 38px;">Asignar repartidor</button>
             </div>
         </form>
+    </div>
+
+    <div class="col-6">
+        <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
     </div>
 
     <div th:if="${repartidor != null}" class="row mt-3 col">
@@ -78,9 +83,40 @@
 </div>
 </div>
 
-
-
 <div th:replace="fragments::javascript"/>
 
+<script th:inline="javascript">
+    function buscarRepartidores(nombre) {
+        if (nombre.length >= 3) {
+            $.get("/buscarRepartidores?nombre=" + nombre, function (data) {
+                mostrarSugerencias(data);
+            });
+        } else {
+            limpiarSugerencias();
+        }
+    }
+
+    function mostrarSugerencias(sugerencias) {
+        var sugerenciasDiv = document.getElementById("sugerencias");
+        sugerenciasDiv.innerHTML = sugerencias.join('');
+        sugerenciasDiv.style.display = "block";
+
+        var sugerenciaItems = sugerenciasDiv.getElementsByClassName("sugerencia-item");
+        for (var i = 0; i < sugerenciaItems.length; i++) {
+            sugerenciaItems[i].addEventListener("click", function () {
+                document.getElementById("nombre").value = this.innerText;
+                limpiarSugerencias();
+            });
+        }
+    }
+
+    function limpiarSugerencias() {
+        var sugerenciasDiv = document.getElementById("sugerencias");
+        sugerenciasDiv.innerHTML = "";
+        sugerenciasDiv.style.display = "none";
+    }
+</script>
+
 </body>
+
 </html>
