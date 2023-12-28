@@ -14,7 +14,7 @@ Las operaciones disponibles son:
     mostrándolo directamente en la web de la tienda.
 
 ## POST. Tienda crea envío.
-Ruta: POST `/envios/`
+Ruta: POST `/api/envios/`
 
 Body:
 
@@ -61,7 +61,7 @@ Status:
 - 401: API key no identificada o vacía.
 
 ## GET. Consultar precio de envío
-Ruta: GET `/envios/tarifas?peso=xxx&cp=xxxxx&bultos=xx`
+Ruta: GET `/api/envios/tarifas?peso=xxx&cp=xxxxx&bultos=xx`
 
 Parametros:
 - peso: `int`. Peso del envío.
@@ -92,7 +92,7 @@ Status:
 - 401: API key no identificada o vacía.
 
 ## POST. Cancelar envío
-Ruta: POST `/envios/{codigo}/historico/cancelar`
+Ruta: POST `/api/envios/{codigo}/historico/cancelar`
 
 Body [opcional]:
 ```
@@ -112,7 +112,7 @@ Status:
 
 
 ## GET. Mostrar datos e histórico de todos envíos de tienda
-Ruta: GET `/envios/`
+Ruta: GET `/api/envios/`
 
 Body:
 ```
@@ -149,7 +149,7 @@ Status:
 
 - 401: API key no identificada o vacía.
 ## GET. Mostrar datos e histórico de envío (público)
-Ruta: GET `/envios/{codigo}`
+Ruta: GET `/api/envios/{codigo}`
 Parametros:
 - codigo: `string`. Código UUID que identifica al envío.
 

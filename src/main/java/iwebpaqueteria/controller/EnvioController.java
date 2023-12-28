@@ -61,14 +61,6 @@ public class EnvioController {
         }
     }
 
-    private UsuarioData validarApikey(String apiKey){
-        UsuarioData usuario = usuarioService.findByAPIKey(apiKey);
-        if (usuario == null) {
-            throw new UsuarioNoLogeadoException();
-        }
-        return usuario;
-    }
-
     @GetMapping("/")
     public String about() {
         return "buscarEnvio";
@@ -116,39 +108,6 @@ public class EnvioController {
         model.addAttribute("tarifas", envioService.tarifasDeEnvio(idEnvio));
 
         return "detalleEnvio";
-    }
-
-    @PostMapping(value = "/envios", consumes = "application/json", produces = "application/json")
-    @ResponseBody
-    public Map<String, Object> crearEnvio(@Valid @RequestBody EnvioDireccionData envioDireccionData, @RequestHeader("Authorization") String apiKey) {
-        Map<String, Object> response = new HashMap<>();
-
-        UsuarioData tienda = validarApikey(apiKey);
-
-        DireccionData destino = direccionService.crearDireccion(envioDireccionData.getDestino());
-        EnvioData envio;
-        try{
-            envio = envioService.crearEnvio(envioDireccionData.getPeso(), envioDireccionData.getBultos(), envioDireccionData.getObservaciones(), tienda.getId(), destino.getId());
-        } catch (EnvioServiceException e){
-            throw new EnvioIncorrectoException(e.getMessage());
-        }
-
-        response.put("codigo", envio.getCodigo());
-        return response;
-    }
-
-    @PostMapping(value = "/envios/{codigo}/historico/cancelar", consumes = "application/json", produces = "application/json")
-    @ResponseBody
-    public void cancelarEnvío(@PathVariable(value="codigo") String codigoEnvio, @RequestHeader("Authorization") String apiKey, @RequestBody Map<String, String> body) {
-        UsuarioData tienda = validarApikey(apiKey);
-
-        String observaciones = body.get("observaciones");
-
-        try{
-            envioService.cancelarEnvio(codigoEnvio, observaciones);
-        } catch (EnvioServiceException e){
-            throw new EnvioIncorrectoException(e.getMessage());
-        }
     }
 
     @PostMapping("/envios/{id}/repartidor")
