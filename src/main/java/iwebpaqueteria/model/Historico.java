@@ -23,6 +23,8 @@ public class Historico {
     @CreationTimestamp
     private LocalDateTime fecha;
 
+    private String observaciones;
+
     @ManyToOne
     @MapsId("envioId")
     @JoinColumn(name = "envioId")
@@ -81,6 +83,14 @@ public class Historico {
 
     public void setEstadoId(Long estadoId) {
         this.estadoId = estadoId;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+    	this.observaciones = observaciones;
     }
 
     @Override
