@@ -1,6 +1,7 @@
 package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.EnvioData;
+import iwebpaqueteria.dto.EnvioReducidoData;
 import iwebpaqueteria.dto.TarifaData;
 import iwebpaqueteria.model.*;
 import iwebpaqueteria.repository.*;
@@ -174,5 +175,15 @@ public class EnvioService {
         envio.addHistorico(envioCanceladoH);
 
         envioCanceladoH = historicoRepository.save(envioCanceladoH);
+    }
+
+    @Transactional
+    public EnvioReducidoData resumenEnvio(String codigoEnvio) {
+        Envio envio = envioRepository.findByCodigo(codigoEnvio).
+                orElseThrow(() -> new EnvioServiceException("No existe envío con código " + codigoEnvio));
+
+        EnvioReducidoData envioResult = modelMapper.map(envio, EnvioReducidoData.class);
+
+        return envioResult;
     }
 }

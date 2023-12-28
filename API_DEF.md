@@ -131,7 +131,7 @@ Status:
 [
   {
     "id": int,
-    "historico": [
+    "historicos": [
       {
         "estado": string,
         "timestamp": timestamp,
@@ -158,8 +158,10 @@ Status:
 
 ```
 {
+  "codigo": string,
   "peso": string,
-  "historico": [
+  "bultos": int,
+  "historicos": [
     {
       "estado": string,
       "timestamp": timestamp,

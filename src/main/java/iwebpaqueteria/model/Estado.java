@@ -46,6 +46,9 @@ public class Estado {
     public Set<Historico> getHistoricos() {
         return historicos;
     }
+    public void setHistoricos(Set<Historico> historicos) {
+        this.historicos = historicos;
+    }
 
     @Override
     public boolean equals(Object o) {

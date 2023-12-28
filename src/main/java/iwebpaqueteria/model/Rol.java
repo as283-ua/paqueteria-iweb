@@ -45,6 +45,10 @@ public class Rol {
         throw new NotYetImplementedException();
     }
 
+    public void setUsuarios(Set<Usuario> usuarios) {
+        this.usuarios = usuarios;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

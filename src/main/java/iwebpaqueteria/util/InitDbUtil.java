@@ -65,7 +65,6 @@ public class InitDbUtil {
         crearEstadoIfNotExists("Cancelado");
     }
 
-    @PostConstruct
     @Transactional
     public void initDatabase() {
         initRoles();
