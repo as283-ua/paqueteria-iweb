@@ -68,9 +68,7 @@ public class InitDbUtil {
     @Transactional
     public void initDatabase() {
         initRoles();
-
         initTarifas();
-
         initEstados();
     }
 

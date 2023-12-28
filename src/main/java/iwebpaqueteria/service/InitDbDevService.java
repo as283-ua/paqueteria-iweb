@@ -15,7 +15,6 @@ public class InitDbDevService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-
     @Autowired
     private RolRepository rolRepository;
     @Autowired
