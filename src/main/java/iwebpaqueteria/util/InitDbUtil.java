@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
+import javax.swing.text.TableView;
+import java.util.*;
 
 @Component
 public class InitDbUtil {
@@ -23,56 +25,65 @@ public class InitDbUtil {
     @Autowired
     private EstadoRepository estadoRepository;
 
-    private void crearRolIfNotExists(String nombre){
+    private Rol crearRolIfNotExists(String nombre){
         try{
             Rol rol = new Rol();
             rol.setNombre(nombre);
-            rolRepository.save(rol);
+            return rolRepository.save(rol);
         } catch(Exception ignored){}
+        return null;
     }
 
-    private void crearTarifaIfNotExists(String nombre, int coste){
+    private Tarifa crearTarifaIfNotExists(String nombre, int coste){
         try{
             Tarifa tarifa = new Tarifa(nombre, coste);
-            tarifaRepository.save(tarifa);
+            return tarifaRepository.save(tarifa);
         } catch(Exception ignored){}
+        return null;
     }
 
-    private void crearEstadoIfNotExists(String nombre){
+    private Estado crearEstadoIfNotExists(String nombre){
         try{
             Estado estado = new Estado(nombre);
-            estadoRepository.save(estado);
+            return estadoRepository.save(estado);
         } catch(Exception ignored){}
+        return null;
     }
 
-    public void initRoles(){
-        crearRolIfNotExists("webmaster");
-        crearRolIfNotExists("tienda");
-        crearRolIfNotExists("repartidor");
+    public List<Rol> initRoles(){
+        List<Rol> roles = new ArrayList<>();
+        roles.add(crearRolIfNotExists("webmaster"));
+        roles.add(crearRolIfNotExists("tienda"));
+        roles.add(crearRolIfNotExists("repartidor"));
+        return roles;
     }
 
-    public void initTarifas(){
-        crearTarifaIfNotExists("Corta distancia", 1);
-        crearTarifaIfNotExists("Larga distancia", 2);
-        crearTarifaIfNotExists("Bultos", 1);
+    public List<Tarifa> initTarifas(){
+        List<Tarifa> tarifas = new ArrayList<>();
+        tarifas.add(crearTarifaIfNotExists("Corta distancia", 1));
+        tarifas.add(crearTarifaIfNotExists("Larga distancia", 2));
+        tarifas.add(crearTarifaIfNotExists("Bultos", 1));
+        return tarifas;
     }
 
-    public void initEstados(){
-        crearEstadoIfNotExists("En almacén");
-        crearEstadoIfNotExists("Enviado");
-        crearEstadoIfNotExists("En reparto");
-        crearEstadoIfNotExists("Entregado");
-        crearEstadoIfNotExists("Devuelto");
-        crearEstadoIfNotExists("Cancelado");
+    public List<Estado> initEstados(){
+        List<Estado> estados = new ArrayList<>();
+        estados.add(crearEstadoIfNotExists("En almacén"));
+        estados.add(crearEstadoIfNotExists("Enviado"));
+        estados.add(crearEstadoIfNotExists("En reparto"));
+        estados.add(crearEstadoIfNotExists("Entregado"));
+        estados.add(crearEstadoIfNotExists("Devuelto"));
+        estados.add(crearEstadoIfNotExists("Cancelado"));
+        return estados;
     }
 
     @Transactional
-    public void initDatabase() {
-        initRoles();
-
-        initTarifas();
-
-        initEstados();
+    public Map<String, List<?>> initDatabase() {
+        Map<String, List<?>> result = new HashMap<>();
+        result.put("roles", initRoles());
+        result.put("estados", initEstados());
+        result.put("tarifas", initTarifas());
+        return result;
     }
 
 }

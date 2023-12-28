@@ -17,11 +17,7 @@ public class InitDbProdService {
     @PostConstruct
     @Transactional
     public void initDatabase() {
-        initDbUtil.initRoles();
-
-        initDbUtil.initTarifas();
-
-        initDbUtil.initEstados();
+        initDbUtil.initDatabase();
     }
 
 }

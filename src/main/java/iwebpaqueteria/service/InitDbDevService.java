@@ -2,11 +2,16 @@ package iwebpaqueteria.service;
 
 import iwebpaqueteria.model.*;
 import iwebpaqueteria.repository.*;
+import iwebpaqueteria.util.InitDbUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 // Se ejecuta solo si el perfil activo es 'dev'
@@ -14,8 +19,9 @@ import javax.annotation.PostConstruct;
 public class InitDbDevService {
 
     @Autowired
+    private InitDbUtil initDbUtil;
+    @Autowired
     private UsuarioRepository usuarioRepository;
-
     @Autowired
     private RolRepository rolRepository;
     @Autowired
@@ -27,45 +33,34 @@ public class InitDbDevService {
     @Autowired
     private EstadoRepository estadoRepository;
 
-    private void crearEstadoIfNotExists(String nombre){
-        try{
-            Estado estado = new Estado(nombre);
-            estadoRepository.save(estado);
-        } catch(Exception ignored){}
-    }
-
-    private void initEstados(){
-        crearEstadoIfNotExists("En almacén");
-        crearEstadoIfNotExists("Enviado");
-        crearEstadoIfNotExists("En reparto");
-        crearEstadoIfNotExists("Entregado");
-        crearEstadoIfNotExists("Devuelto");
-        crearEstadoIfNotExists("Cancelado");
-    }
-
-    // Se ejecuta tras crear el contexto de la aplicación
-    // para inicializar la base de datos
     @PostConstruct
     public void initDatabase() {
-        initEstados();
+        Map<String, List<?>> result = initDbUtil.initDatabase();
+
+        List<Rol> roles = (List<Rol>) result.get("roles");
+        List<Tarifa> tarifas = (List<Tarifa>) result.get("tarifas");
+        List<Estado> estados = (List<Estado>) result.get("estados");
+
+        Rol webmaster =  roles.get(0);
+        Rol tienda =  roles.get(1);
+        Rol repartidor =  roles.get(2);
+
+        Tarifa tarifaCortaDistancia = tarifas.get(0);
+        Tarifa tarifaLargaDistancia = tarifas.get(1);
+        Tarifa tarifaBultos = tarifas.get(2);
+
+        Estado enAlmacen = estados.get(0);
+        Estado enviado = estados.get(1);
+        Estado enReparto = estados.get(2);
+        Estado entregado = estados.get(3);
+        Estado devuelto = estados.get(4);
+        Estado cancelado = estados.get(5);
 
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");
         usuario.setContrasenya("123");
         usuario.setTelefono("123456789");
         usuarioRepository.save(usuario);
-
-        Rol webmaster =  new Rol();
-        webmaster.setNombre("webmaster");
-        rolRepository.save(webmaster);
-
-        Rol tienda =  new Rol();
-        tienda.setNombre("tienda");
-        rolRepository.save(tienda);
-
-        Rol repartidor =  new Rol();
-        repartidor.setNombre("repartidor");
-        rolRepository.save(repartidor);
 
         usuario.setRol(webmaster);
         usuarioRepository.save(usuario);
@@ -93,13 +88,6 @@ public class InitDbDevService {
 
         Direccion direccionDestino = new Direccion("0300", "San Vicente", "Alicante", 2, 1, "Calle Vista", "0000000", "Juan Carlos");
         direccionRepository.save(direccionDestino);
-
-        Tarifa tarifaCortaDistancia = new Tarifa("Corta distancia", 1);
-        tarifaCortaDistancia = tarifaRepository.save(tarifaCortaDistancia);
-        Tarifa tarifaLargaDistancia = new Tarifa("Larga distancia", 2);
-        tarifaRepository.save(tarifaLargaDistancia);
-        Tarifa tarifaBultos = new Tarifa("Bultos", 1);
-        tarifaRepository.save(tarifaBultos);
 
         Envio envio = new Envio(1, 1, 1, "observaciones", direccionOrigenTienda1, direccionDestino);
         envio.addTarifa(tarifaCortaDistancia);
