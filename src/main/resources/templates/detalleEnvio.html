@@ -87,7 +87,7 @@
 
 <script th:inline="javascript">
     function buscarRepartidores(nombre) {
-        if (nombre.length >= 3) {
+        if (nombre.length >= 1) {
             $.get("/buscarRepartidores?nombre=" + nombre, function (data) {
                 mostrarSugerencias(data);
             });

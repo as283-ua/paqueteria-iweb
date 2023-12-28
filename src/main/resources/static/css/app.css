@@ -1,3 +1,12 @@
+.sugerencias{
+    position: absolute;
+    width: 300px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0px 0px 5px #ccc;
+}
+
 .sugerencia-item{
     padding: 10px;
     border: 1px solid #ccc;
