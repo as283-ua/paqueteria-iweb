@@ -113,6 +113,7 @@ public class Usuario {
 
     public void setRol(Rol rol) {
         this.rol = rol;
+        rol.getUsuarios().add(this);
     }
 
     public Set<Envio> getEnvios() {

@@ -1,8 +1,10 @@
 package iwebpaqueteria.repository;
 
 import iwebpaqueteria.model.*;
+import iwebpaqueteria.util.InitDbUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,9 @@ public class TestTodo {
 
     @Autowired
     private HistoricoRepository historicoRepository;
+
+    @Autowired
+    private InitDbUtil initDbUtil;
 
     @Test
     @Transactional
@@ -133,5 +138,24 @@ public class TestTodo {
         assertThat(tienda.getDireccion()).isNotNull();
 
         assertThat(tienda.getDireccion().getCalle()).isEqualTo(direccion.getCalle());
+    }
+
+    @Test
+    @Transactional
+    public void testRolUsuarios(){
+        initDbUtil.initRoles();
+
+        Rol rol = rolRepository.findByNombre("webmaster").orElse(null);
+        assertThat(rol).isNotNull();
+
+        Usuario usuario = new Usuario();
+        usuario.setEmail("usu@ua");
+        usuario.setContrasenya("1234");
+        usuario.setNombre("Juan");
+        usuario.setTelefono("123456789");
+        usuario.setRol(rol);
+        usuario = usuarioRepository.save(usuario);
+
+        assertThat(rol.getUsuarios().size()).isEqualTo(1);
     }
 }
