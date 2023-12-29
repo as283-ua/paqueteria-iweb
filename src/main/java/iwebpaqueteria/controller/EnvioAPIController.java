@@ -2,6 +2,7 @@ package iwebpaqueteria.controller;
 
 import iwebpaqueteria.controller.exception.EnvioIncorrectoException;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
+import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
 import iwebpaqueteria.dto.*;
 import iwebpaqueteria.service.DireccionService;
 import iwebpaqueteria.service.EnvioService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -33,7 +35,7 @@ public class EnvioAPIController {
     private UsuarioData validarApikey(String apiKey){
         UsuarioData usuario = usuarioService.findByAPIKey(apiKey);
         if (usuario == null) {
-            throw new UsuarioNoLogeadoException();
+            throw new UsuarioSinPermisosException();
         }
         return usuario;
     }
@@ -81,5 +83,12 @@ public class EnvioAPIController {
         }
 
         return envio;
+    }
+
+    @GetMapping(value = "/envios", produces = "application/json")
+    public List<EnvioReducidoData> enviosDeTienda(@RequestHeader("Authorization") String apiKey, @RequestBody(required = false) RangoFechas rangoFechas) {
+        UsuarioData tienda = validarApikey(apiKey);
+
+        return usuarioService.enviosTienda(tienda.getId(), rangoFechas);
     }
 }

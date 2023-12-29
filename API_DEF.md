@@ -130,7 +130,10 @@ Status:
 ```
 [
   {
-    "id": int,
+    "codigo": string,
+    "peso": int,
+    "precio": int,
+    "observaciones": string,
     "historicos": [
       {
         "estado": string,
@@ -138,10 +141,7 @@ Status:
         "observaciones": string
       },
       ...
-    ],
-    "peso": int,
-    "precio": int,
-    "observaciones": string
+    ]
   },
   ...
 ]

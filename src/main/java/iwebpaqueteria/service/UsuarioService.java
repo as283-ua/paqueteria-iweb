@@ -1,8 +1,8 @@
 package iwebpaqueteria.service;
 
-import iwebpaqueteria.dto.DireccionData;
-import iwebpaqueteria.dto.UsuarioData;
+import iwebpaqueteria.dto.*;
 import iwebpaqueteria.model.Direccion;
+import iwebpaqueteria.model.Envio;
 import iwebpaqueteria.model.Rol;
 import iwebpaqueteria.model.Usuario;
 import iwebpaqueteria.repository.RolRepository;
@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -169,5 +166,22 @@ public class UsuarioService {
             return null;
 
         return usuarios.stream().filter(usuario -> "repartidor".equals(usuario.getRol().getNombre())).collect(Collectors.toList()).stream().map(Usuario::getNombre).collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<EnvioReducidoData> enviosTienda(Long idTienda, RangoFechas rangoFechas) {
+        List<EnvioReducidoData> envios = new ArrayList<>();
+
+        Usuario tienda = usuarioRepository.findById(idTienda).orElse(null);
+        if(tienda == null)
+            throw new UsuarioServiceException("Tienda con ID " + idTienda + " no existe");
+
+        Set<Envio> envioEntities = tienda.getDireccion().getEnviosOrigen();
+
+        for (Envio envio : envioEntities) {
+            envios.add(modelMapper.map(envio, EnvioReducidoData.class));
+        }
+
+        return envios;
     }
 }
