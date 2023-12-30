@@ -123,8 +123,10 @@ Body:
 ```
 Parametros:
 - header `authorization`, `ApiKey: string`. En base a la API key se identifica la tienda y se devuelven los envíos de esta misma.
+- fechaInicio: `timestamp`. Fecha de inicio de búsqueda. Se aplica a la fecha de creación del pedido (estado "En almacén"). Si no se especifica no se aplica este filtro de fecha mínima.
+- fechaInicio: `timestamp`. Fecha de fin de búsqueda. Se aplica a la fecha de creación del pedido (estado "En almacén"). Si no se especifica no se aplica este filtro de fecha máxima.
 
-Status:
+- Status:
 - 200: Listado de envios e historicos de la tienda entre fechas especificadas:
 
 ```

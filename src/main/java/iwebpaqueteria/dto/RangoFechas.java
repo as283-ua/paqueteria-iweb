@@ -1,32 +1,33 @@
 package iwebpaqueteria.dto;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
 public class RangoFechas {
-    Date fechaInicio;
-    Date fechaFin;
+    LocalDate fechaInicio;
+    LocalDate fechaFin;
 
     public RangoFechas() {
     }
 
-    public RangoFechas(Date fechaInicio, Date fechaFin) {
+    public RangoFechas(LocalDate fechaInicio, LocalDate fechaFin) {
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
     }
 
-    public Date getFechaInicio() {
+    public LocalDate getFechaInicio() {
         return fechaInicio;
     }
-    public void setFechaInicio(Date fechaInicio) {
+    public void setFechaInicio(LocalDate fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
 
-    public Date getFechaFin() {
+    public LocalDate getFechaFin() {
         return fechaFin;
     }
 
-    public void setFechaFin(Date fechaFin) {
+    public void setFechaFin(LocalDate fechaFin) {
         this.fechaFin = fechaFin;
     }
 }

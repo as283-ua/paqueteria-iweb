@@ -1,10 +1,9 @@
 package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.*;
-import iwebpaqueteria.model.Direccion;
-import iwebpaqueteria.model.Envio;
-import iwebpaqueteria.model.Rol;
-import iwebpaqueteria.model.Usuario;
+import iwebpaqueteria.model.*;
+import iwebpaqueteria.repository.EstadoRepository;
+import iwebpaqueteria.repository.HistoricoRepository;
 import iwebpaqueteria.repository.RolRepository;
 import iwebpaqueteria.repository.UsuarioRepository;
 import iwebpaqueteria.service.exception.UsuarioServiceException;
@@ -31,6 +30,9 @@ public class UsuarioService {
 
     @Autowired
     private RolRepository rolRepository;
+
+    @Autowired
+    private EstadoRepository estadoRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -168,9 +170,46 @@ public class UsuarioService {
         return usuarios.stream().filter(usuario -> "repartidor".equals(usuario.getRol().getNombre())).collect(Collectors.toList()).stream().map(Usuario::getNombre).collect(Collectors.toList());
     }
 
+    private List<EnvioReducidoData> filtrarEnvioFecha(Set<Envio> envios, RangoFechas rangoFechas) {
+        List<EnvioReducidoData> enviosReducidos = new ArrayList<>();
+        Estado enAlmacen = estadoRepository.findByNombre("En almacén").orElse(null);
+
+        if (enAlmacen == null)
+            throw new UsuarioServiceException("No existe el estado En almacén");
+
+        for (Envio envio : envios) {
+            for(Historico historico : envio.getHistoricos()) {
+                if(!historico.getEstado().equals(enAlmacen)){
+                    continue;
+                }
+
+                boolean soloInicio = rangoFechas.getFechaInicio() != null && rangoFechas.getFechaFin() == null
+                        && historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio());
+                if(soloInicio) {
+                    enviosReducidos.add(modelMapper.map(envio, EnvioReducidoData.class));
+                    break;
+                }
+
+                boolean soloFin = rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() != null
+                        && historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio());
+                if(soloFin) {
+                    enviosReducidos.add(modelMapper.map(envio, EnvioReducidoData.class));
+                    break;
+                }
+
+                boolean enRango = historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio()) && historico.getFecha().toLocalDate().isBefore(rangoFechas.getFechaFin());
+                if(enRango) {
+                    enviosReducidos.add(modelMapper.map(envio, EnvioReducidoData.class));
+                    break;
+                }
+            }
+        }
+        return enviosReducidos;
+    }
+
     @Transactional
     public List<EnvioReducidoData> enviosTienda(Long idTienda, RangoFechas rangoFechas) {
-        List<EnvioReducidoData> envios = new ArrayList<>();
+        List<EnvioReducidoData> envios;
 
         Usuario tienda = usuarioRepository.findById(idTienda).orElse(null);
         if(tienda == null)
@@ -178,10 +217,14 @@ public class UsuarioService {
 
         Set<Envio> envioEntities = tienda.getDireccion().getEnviosOrigen();
 
-        for (Envio envio : envioEntities) {
-            envios.add(modelMapper.map(envio, EnvioReducidoData.class));
+        boolean todosEnvios = rangoFechas == null || rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() == null;
+
+        if(todosEnvios){
+            envios = envioEntities.stream().map(envio -> modelMapper.map(envio, EnvioReducidoData.class)).collect(Collectors.toList());
+            return envios;
         }
 
+        envios = filtrarEnvioFecha(envioEntities, rangoFechas);
         return envios;
     }
 }

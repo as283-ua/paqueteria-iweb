@@ -44,6 +44,9 @@ public class Direccion {
     @OneToMany(mappedBy = "direccionDestino")
     private Set<Envio> enviosDestino = new HashSet<>();
 
+    @OneToOne(mappedBy = "direccion")
+    private Usuario usuario;
+
     public Direccion() {}
 
     public Direccion(String codigoPostal, String localidad, String provincia, int numero, int planta, String calle, String telefono, String nombre) {
@@ -131,6 +134,22 @@ public class Direccion {
 
     public Set<Envio> getEnviosDestino() {
         return enviosDestino;
+    }
+
+    public void setEnviosOrigen(Set<Envio> enviosOrigen) {
+        this.enviosOrigen = enviosOrigen;
+    }
+
+    public void setEnviosDestino(Set<Envio> enviosDestino) {
+        this.enviosDestino = enviosDestino;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     @Override
