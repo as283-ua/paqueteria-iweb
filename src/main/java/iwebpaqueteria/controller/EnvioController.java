@@ -29,6 +29,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -66,6 +67,16 @@ public class EnvioController {
         return "buscarEnvio";
     }
 
+    public Map<Long, DireccionData> direccionesDeEnvios(List<EnvioData> envios){
+        Map<Long, DireccionData> result = new HashMap<>();
+
+        for (EnvioData envio : envios) {
+            result.put(envio.getId(), direccionService.findById(envio.getDireccionDestinoId()));
+        }
+
+        return result;
+    }
+
     @GetMapping("/envios")
     public String listadoEnvios(Model model, HttpSession session) {
 
@@ -73,9 +84,13 @@ public class EnvioController {
 
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
 
-        model.addAttribute("usuario", usuario);
-        model.addAttribute("envios", envioService.findAll());
+        List<EnvioData> envios = envioService.findAll();
+        Map<Long, DireccionData> direcciones = direccionesDeEnvios(envios);
         Float precioTotal = envioService.calcularPrecioTotal(envioService.findAll());
+
+        model.addAttribute("usuario", usuario);
+        model.addAttribute("envios", envios);
+        model.addAttribute("direcciones", direcciones);
         model.addAttribute("precioTotal", precioTotal);
         return "listadoEnvios";
     }
