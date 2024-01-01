@@ -89,6 +89,15 @@ public class EnvioAPIController {
     public List<EnvioReducidoData> enviosDeTienda(@RequestHeader("Authorization") String apiKey, @RequestBody(required = false) RangoFechas rangoFechas) {
         UsuarioData tienda = validarApikey(apiKey);
 
+        if (rangoFechas != null){
+            if(rangoFechas.getFechaInicio() != null){
+                rangoFechas.setFechaInicio(rangoFechas.getFechaInicio().minusDays(1));
+            }
+            if(rangoFechas.getFechaFin() != null){
+                rangoFechas.setFechaFin(rangoFechas.getFechaFin().plusDays(1));
+            }
+        }
+
         return usuarioService.enviosTienda(tienda.getId(), rangoFechas);
     }
 }
