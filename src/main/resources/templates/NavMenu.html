@@ -2,12 +2,19 @@
 
     <a class="navbar-brand" href="/">Paqueteria</a>
 
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item" th:if="${usuario==null}"><a class="nav-link" href="/login">Login</a></li>
-            <li class="nav-item" th:if="${usuario!=null}"><a class="nav-link" href="/envios">Envios</a></li>
-            <li class="nav-item" th:if="${usuario!=null && 'webmaster'.equals(usuario.getRol().getNombre())}"><a class="nav-link" href="/repartidores">Repartidores</a></li>
-            <li class="nav-item" th:if="${usuario!=null &&'webmaster'.equals(usuario.getRol().getNombre())}"><a class="nav-link" href="/tiendas">Tiendas</a></li>
-            <li class="nav-item" th:if="${usuario!=null &&'tienda'.equals(usuario.getRol().getNombre())}"><a class="nav-link" th:href="'/tiendas/' + ${usuario.id} + '/APIKEY/'">API KEY</a></li>
-        </ul>
+    <ul class="navbar-nav mr-auto" th:if="${usuario==null}">
+        <li class="nav-item" th:if="${usuario==null}"><a class="nav-link" href="/login">Login</a></li>
+    </ul>
+
+    <ul class="navbar-nav d-flex justify-content-between w-100" th:if="${usuario!=null}">
+        <div class="d-flex flex-row">
+            <li class="nav-item"><a class="nav-link" href="/envios">Envios</a></li>
+            <li class="nav-item"><a class="nav-link" href="/repartidores" th:if="${'webmaster'.equals(usuario.getRol().getNombre())}">Repartidores</a></li>
+            <li class="nav-item"><a class="nav-link" href="/tiendas" th:if="${'webmaster'.equals(usuario.getRol().getNombre())}">Tiendas</a></li>
+            <li class="nav-item"><a class="nav-link" th:href="'/tiendas/' + ${usuario.id} + '/APIKEY/'" th:if="${'tienda'.equals(usuario.getRol().getNombre())}">API KEY</a></li>
+        </div>
+
+        <li class="nav-item"><a class="nav-link" href="/logout">Cerrar Sesion</a></li>
+    </ul>
 
 </nav>

@@ -98,6 +98,6 @@ public class EnvioAPIController {
             }
         }
 
-        return envioService.enviosTienda(tienda.getId(), rangoFechas);
+        return envioService.enviosReducidosTienda(tienda.getId(), rangoFechas);
     }
 }

@@ -58,7 +58,11 @@ public class EnvioController {
     }
 
     @GetMapping("/")
-    public String about() {
+    public String buscarEnvio(Model model) {
+        Long idYo = managerUserSession.usuarioLogeado();
+        if (idYo!=null)
+            model.addAttribute("usuario", usuarioService.findById(idYo));
+
         return "buscarEnvio";
     }
 
@@ -88,11 +92,20 @@ public class EnvioController {
             }
         }
 
-        List<EnvioData> envios = envioService.enviosRepartidor(usuario.getId(), rangoFechas);
+        List<EnvioData> envios;
+        if(usuario.getRol().getNombre().equalsIgnoreCase("webmaster"))
+            envios = envioService.findAll(rangoFechas);
+        else if(usuario.getRol().getNombre().equalsIgnoreCase("tienda"))
+            envios = envioService.enviosTienda(usuario.getId(), rangoFechas);
+        else if(usuario.getRol().getNombre().equalsIgnoreCase("repartidor"))
+            envios = envioService.enviosRepartidor(usuario.getId(), rangoFechas);
+        else
+            throw new UsuarioSinPermisosException();
+
         Map<Long, DireccionData> direcciones = direccionesDeEnvios(envios);
         Float precioTotal = envioService.calcularPrecioTotal(envios);
 
-        model.addAttribute("rangoFechas", rangoFechas);
+        model.addAttribute("rangoFechas", new RangoFechas());
         model.addAttribute("usuario", usuario);
         model.addAttribute("envios", envios);
         model.addAttribute("direcciones", direcciones);
