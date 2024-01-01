@@ -1,11 +1,15 @@
 package iwebpaqueteria.dto;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.Objects;
 
 public class RangoFechas {
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate fechaInicio;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     LocalDate fechaFin;
 
     public RangoFechas() {

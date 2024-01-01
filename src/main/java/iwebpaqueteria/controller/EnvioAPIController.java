@@ -79,7 +79,7 @@ public class EnvioAPIController {
         try{
             envio = envioService.resumenEnvio(codigoEnvio);
         } catch (EnvioServiceException e) {
-            throw new EnvioIncorrectoException("Envío con código " + codigoEnvio + " no existe");
+            throw new EnvioIncorrectoException(e.getMessage());
         }
 
         return envio;
@@ -98,6 +98,6 @@ public class EnvioAPIController {
             }
         }
 
-        return usuarioService.enviosTienda(tienda.getId(), rangoFechas);
+        return envioService.enviosTienda(tienda.getId(), rangoFechas);
     }
 }

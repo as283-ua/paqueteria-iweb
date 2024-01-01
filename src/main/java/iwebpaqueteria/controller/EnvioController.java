@@ -88,10 +88,11 @@ public class EnvioController {
             }
         }
 
-        List<EnvioData> envios = usuarioService.enviosRepartidor(usuario.getId(), rangoFechas);
+        List<EnvioData> envios = envioService.enviosRepartidor(usuario.getId(), rangoFechas);
         Map<Long, DireccionData> direcciones = direccionesDeEnvios(envios);
-        Float precioTotal = envioService.calcularPrecioTotal(envioService.findAll());
+        Float precioTotal = envioService.calcularPrecioTotal(envios);
 
+        model.addAttribute("rangoFechas", rangoFechas);
         model.addAttribute("usuario", usuario);
         model.addAttribute("envios", envios);
         model.addAttribute("direcciones", direcciones);

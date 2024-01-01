@@ -2,10 +2,12 @@ package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.EnvioReducidoData;
+import iwebpaqueteria.dto.RangoFechas;
 import iwebpaqueteria.dto.TarifaData;
 import iwebpaqueteria.model.*;
 import iwebpaqueteria.repository.*;
 import iwebpaqueteria.service.exception.EnvioServiceException;
+import iwebpaqueteria.service.exception.UsuarioServiceException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -187,5 +190,83 @@ public class EnvioService {
         EnvioReducidoData envioResult = modelMapper.map(envio, EnvioReducidoData.class);
 
         return envioResult;
+    }
+
+
+    private List<EnvioReducidoData> filtrarEnvioFecha(Set<Envio> envios, RangoFechas rangoFechas) {
+        List<EnvioReducidoData> enviosReducidos = new ArrayList<>();
+        Estado enAlmacen = estadoRepository.findByNombre("En almacén").orElse(null);
+
+        if (enAlmacen == null)
+            throw new UsuarioServiceException("No existe el estado En almacén");
+
+        for (Envio envio : envios) {
+            for(Historico historico : envio.getHistoricos()) {
+                if(!historico.getEstado().equals(enAlmacen)){
+                    continue;
+                }
+
+                boolean soloInicio = rangoFechas.getFechaInicio() != null && rangoFechas.getFechaFin() == null
+                        && historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio());
+                if(soloInicio) {
+                    enviosReducidos.add(modelMapper.map(envio, EnvioReducidoData.class));
+                    break;
+                }
+
+                boolean soloFin = rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() != null
+                        && historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio());
+                if(soloFin) {
+                    enviosReducidos.add(modelMapper.map(envio, EnvioReducidoData.class));
+                    break;
+                }
+
+                boolean enRango = historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio()) && historico.getFecha().toLocalDate().isBefore(rangoFechas.getFechaFin());
+                if(enRango) {
+                    enviosReducidos.add(modelMapper.map(envio, EnvioReducidoData.class));
+                    break;
+                }
+            }
+        }
+        return enviosReducidos;
+    }
+
+    @Transactional
+    public List<EnvioReducidoData> enviosTienda(Long idTienda, RangoFechas rangoFechas) {
+        List<EnvioReducidoData> envios;
+
+        Usuario tienda = usuarioRepository.findById(idTienda).orElse(null);
+        if(tienda == null)
+            throw new UsuarioServiceException("Tienda con ID " + idTienda + " no existe");
+
+        Set<Envio> envioEntities = tienda.getDireccion().getEnviosOrigen();
+
+        boolean todosEnvios = rangoFechas == null || rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() == null;
+
+        if(todosEnvios){
+            envios = envioEntities.stream().map(envio -> modelMapper.map(envio, EnvioReducidoData.class)).collect(Collectors.toList());
+            return envios;
+        }
+
+        envios = filtrarEnvioFecha(envioEntities, rangoFechas);
+        return envios;
+    }
+
+    @Transactional
+    public List<EnvioData> enviosRepartidor(Long repartidorId, RangoFechas rangoFechas) {
+        Usuario repartidor = usuarioRepository.findById(repartidorId).orElse(null);
+        if (repartidor == null)
+            throw new UsuarioServiceException("Repartidor con ID " + repartidorId + " no existe");
+
+        Set<Envio> envioEntities = repartidor.getEnvios();
+
+        boolean todosEnvios = rangoFechas == null || rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() == null;
+
+        if (todosEnvios) {
+            return envioEntities.stream().map(envio -> modelMapper.map(envio, EnvioData.class)).collect(Collectors.toList());
+        }
+
+        List<EnvioReducidoData> envios = filtrarEnvioFecha(envioEntities, rangoFechas);
+
+        return envios.stream().map(envio -> modelMapper.map(envio, EnvioData.class)).collect(Collectors.toList());
     }
 }
