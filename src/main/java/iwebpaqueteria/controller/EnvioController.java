@@ -4,14 +4,9 @@ import iwebpaqueteria.authentication.ManagerUserSession;
 import iwebpaqueteria.controller.exception.EnvioIncorrectoException;
 import iwebpaqueteria.controller.exception.EnvioNotFoundException;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
-import iwebpaqueteria.dto.DireccionData;
-import iwebpaqueteria.dto.EnvioDireccionData;
-import iwebpaqueteria.dto.LoginData;
+import iwebpaqueteria.dto.*;
 import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
-import iwebpaqueteria.dto.AsignarRepartidorData;
-import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.LoginData;
-import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.model.Direccion;
 import iwebpaqueteria.service.DireccionService;
 import iwebpaqueteria.model.Envio;
@@ -78,13 +73,22 @@ public class EnvioController {
     }
 
     @GetMapping("/envios")
-    public String listadoEnvios(Model model, HttpSession session) {
+    public String listadoEnvios(Model model, @ModelAttribute RangoFechas rangoFechas) {
 
         comprobarUsuarioLogeado();
 
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
 
-        List<EnvioData> envios = envioService.findAll();
+        if (rangoFechas != null){
+            if(rangoFechas.getFechaInicio() != null){
+                rangoFechas.setFechaInicio(rangoFechas.getFechaInicio().minusDays(1));
+            }
+            if(rangoFechas.getFechaFin() != null){
+                rangoFechas.setFechaFin(rangoFechas.getFechaFin().plusDays(1));
+            }
+        }
+
+        List<EnvioData> envios = usuarioService.enviosRepartidor(usuario.getId(), rangoFechas);
         Map<Long, DireccionData> direcciones = direccionesDeEnvios(envios);
         Float precioTotal = envioService.calcularPrecioTotal(envioService.findAll());
 

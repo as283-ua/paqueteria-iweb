@@ -14,6 +14,22 @@
         </div>
     </div>
 
+    <form method="post" th:action="@{/login}" th:object="${loginData}">
+        <div class="form-group">
+            <label for="inicio">De</label>
+            <input type="date" id="inicio" name="inicio">
+        </div>
+        <div class="form-group">
+            <label for="fin">Hasta</label>
+            <input type="date" id="fin" name="fin">
+        </div>
+        <div class="form-group">
+            <button type="reset">Borrar filtro</button>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
     <div class="row mt-3">
         <div class="col">
             <table class="table table-striped">

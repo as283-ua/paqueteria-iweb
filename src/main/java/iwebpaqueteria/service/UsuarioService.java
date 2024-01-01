@@ -227,4 +227,22 @@ public class UsuarioService {
         envios = filtrarEnvioFecha(envioEntities, rangoFechas);
         return envios;
     }
+
+    public List<EnvioData> enviosRepartidor(Long repartidorId, RangoFechas rangoFechas) {
+        Usuario repartidor = usuarioRepository.findById(repartidorId).orElse(null);
+        if (repartidor == null)
+            throw new UsuarioServiceException("Repartidor con ID " + repartidorId + " no existe");
+
+        Set<Envio> envioEntities = repartidor.getEnvios();
+
+        boolean todosEnvios = rangoFechas == null || rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() == null;
+
+        if (todosEnvios) {
+            return envioEntities.stream().map(envio -> modelMapper.map(envio, EnvioData.class)).collect(Collectors.toList());
+        }
+
+        List<EnvioReducidoData> envios = filtrarEnvioFecha(envioEntities, rangoFechas);
+
+        return envios.stream().map(envio -> modelMapper.map(envio, EnvioData.class)).collect(Collectors.toList());
+    }
 }
