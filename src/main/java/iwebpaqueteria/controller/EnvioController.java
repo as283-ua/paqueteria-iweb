@@ -1,30 +1,23 @@
 package iwebpaqueteria.controller;
 
 import iwebpaqueteria.authentication.ManagerUserSession;
-import iwebpaqueteria.controller.exception.EnvioIncorrectoException;
 import iwebpaqueteria.controller.exception.EnvioNotFoundException;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
 import iwebpaqueteria.dto.*;
 import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
-import iwebpaqueteria.dto.LoginData;
-import iwebpaqueteria.model.Direccion;
 import iwebpaqueteria.service.DireccionService;
-import iwebpaqueteria.model.Envio;
 import iwebpaqueteria.service.UsuarioService;
 import iwebpaqueteria.service.EnvioService;
-import iwebpaqueteria.service.exception.EnvioServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -77,35 +70,43 @@ public class EnvioController {
     }
 
     @GetMapping("/envios")
-    public String listadoEnvios(Model model, @ModelAttribute RangoFechas rangoFechas) {
+    public String listadoEnvios(Model model, @ModelAttribute FiltroEnvios filtroEnvios) {
 
         comprobarUsuarioLogeado();
 
         UsuarioData usuario = usuarioService.findById(managerUserSession.usuarioLogeado());
 
-        if (rangoFechas != null){
-            if(rangoFechas.getFechaInicio() != null){
-                rangoFechas.setFechaInicio(rangoFechas.getFechaInicio().minusDays(1));
-            }
-            if(rangoFechas.getFechaFin() != null){
-                rangoFechas.setFechaFin(rangoFechas.getFechaFin().plusDays(1));
+        FiltroEnvios filtro = null;
+        if (filtroEnvios != null){
+            if(filtroEnvios.isHoy()){
+                filtro = new FiltroEnvios(true);
+                filtroEnvios.setFechaInicio(LocalDate.now());
+                filtroEnvios.setFechaFin(LocalDate.now());
+            } else {
+                filtro = new FiltroEnvios(filtroEnvios);
+                if(filtroEnvios.getFechaInicio() != null){
+                    filtro.setFechaInicio(filtroEnvios.getFechaInicio().minusDays(1));
+                }
+                if(filtroEnvios.getFechaFin() != null){
+                    filtro.setFechaFin(filtroEnvios.getFechaFin().plusDays(1));
+                }
             }
         }
 
         List<EnvioData> envios;
         if(usuario.getRol().getNombre().equalsIgnoreCase("webmaster"))
-            envios = envioService.findAll(rangoFechas);
+            envios = envioService.findAll(filtro);
         else if(usuario.getRol().getNombre().equalsIgnoreCase("tienda"))
-            envios = envioService.enviosTienda(usuario.getId(), rangoFechas);
+            envios = envioService.enviosTienda(usuario.getId(), filtro);
         else if(usuario.getRol().getNombre().equalsIgnoreCase("repartidor"))
-            envios = envioService.enviosRepartidor(usuario.getId(), rangoFechas);
+            envios = envioService.enviosRepartidor(usuario.getId(), filtro);
         else
             throw new UsuarioSinPermisosException();
 
         Map<Long, DireccionData> direcciones = direccionesDeEnvios(envios);
         Float precioTotal = envioService.calcularPrecioTotal(envios);
 
-        model.addAttribute("rangoFechas", new RangoFechas());
+        model.addAttribute("rangoFechas", filtroEnvios);
         model.addAttribute("usuario", usuario);
         model.addAttribute("envios", envios);
         model.addAttribute("direcciones", direcciones);

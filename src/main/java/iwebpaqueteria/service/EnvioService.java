@@ -2,7 +2,7 @@ package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.EnvioReducidoData;
-import iwebpaqueteria.dto.RangoFechas;
+import iwebpaqueteria.dto.FiltroEnvios;
 import iwebpaqueteria.dto.TarifaData;
 import iwebpaqueteria.model.*;
 import iwebpaqueteria.repository.*;
@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.annotation.Target;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -50,7 +49,7 @@ public class EnvioService {
     }
 
     @Transactional(readOnly = true)
-    public List<EnvioData> findAll(RangoFechas rangoFechas) {
+    public List<EnvioData> findAll(FiltroEnvios rangoFechas) {
         if(rangoFechas == null) {
             return findAll();
         }
@@ -207,7 +206,7 @@ public class EnvioService {
         return envioResult;
     }
 
-    private List<EnvioReducidoData> filtrarEnviosFechaReducido(Set<Envio> envios, RangoFechas rangoFechas) {
+    private List<EnvioReducidoData> filtrarEnviosFechaReducido(Set<Envio> envios, FiltroEnvios rangoFechas) {
         List<EnvioReducidoData> enviosReducidos = new ArrayList<>();
         Estado enAlmacen = estadoRepository.findByNombre("En almacén").orElse(null);
 
@@ -244,7 +243,7 @@ public class EnvioService {
         return enviosReducidos;
     }
 
-    private List<EnvioData> filtrarEnvioFecha(Set<Envio> envios, RangoFechas rangoFechas) {
+    private List<EnvioData> filtrarEnvioFecha(Set<Envio> envios, FiltroEnvios rangoFechas) {
         List<EnvioData> enviosReducidos = new ArrayList<>();
         Estado enAlmacen = estadoRepository.findByNombre("En almacén").orElse(null);
 
@@ -282,7 +281,7 @@ public class EnvioService {
     }
 
     @Transactional
-    public List<EnvioReducidoData> enviosReducidosTienda(Long idTienda, RangoFechas rangoFechas) {
+    public List<EnvioReducidoData> enviosReducidosTienda(Long idTienda, FiltroEnvios rangoFechas) {
         List<EnvioReducidoData> envios;
 
         Usuario tienda = usuarioRepository.findById(idTienda).orElse(null);
@@ -303,7 +302,7 @@ public class EnvioService {
     }
 
     @Transactional
-    public List<EnvioData> enviosRepartidor(Long repartidorId, RangoFechas rangoFechas) {
+    public List<EnvioData> enviosRepartidor(Long repartidorId, FiltroEnvios rangoFechas) {
         Usuario repartidor = usuarioRepository.findById(repartidorId).orElse(null);
         if (repartidor == null)
             throw new UsuarioServiceException("Repartidor con ID " + repartidorId + " no existe");
@@ -320,7 +319,7 @@ public class EnvioService {
     }
 
     @Transactional
-    public List<EnvioData> enviosTienda(Long tiendaId, RangoFechas rangoFechas) {
+    public List<EnvioData> enviosTienda(Long tiendaId, FiltroEnvios rangoFechas) {
         Usuario tienda = usuarioRepository.findById(tiendaId).orElse(null);
         if (tienda == null)
             throw new UsuarioServiceException("Tienda con ID " + tiendaId + " no existe");

@@ -1,7 +1,6 @@
 package iwebpaqueteria.controller;
 
 import iwebpaqueteria.controller.exception.EnvioIncorrectoException;
-import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
 import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
 import iwebpaqueteria.dto.*;
 import iwebpaqueteria.service.DireccionService;
@@ -86,7 +85,7 @@ public class EnvioAPIController {
     }
 
     @GetMapping(value = "/envios", produces = "application/json")
-    public List<EnvioReducidoData> enviosDeTienda(@RequestHeader("Authorization") String apiKey, @RequestBody(required = false) RangoFechas rangoFechas) {
+    public List<EnvioReducidoData> enviosDeTienda(@RequestHeader("Authorization") String apiKey, @RequestBody(required = false) FiltroEnvios rangoFechas) {
         UsuarioData tienda = validarApikey(apiKey);
 
         if (rangoFechas != null){

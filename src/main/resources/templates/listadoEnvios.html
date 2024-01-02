@@ -13,7 +13,7 @@
             <h2>Envíos</h2>
         </div>
 
-        <form class="col-12" method="get" th:action="@{/envios}" th:object="${rangoFechas}">
+        <form id="formFiltro" class="col-12" method="get" th:action="@{/envios}" th:object="${rangoFechas}">
             <div class="d-flex flex-row">
                 <div class="form-group mr-2">
                     <label for="inicio">De</label>
@@ -23,8 +23,12 @@
                     <label for="fin">Hasta</label>
                     <input type="date" id="fin" name="fin" th:field="*{fechaFin}">
                 </div>
+                <div class="form-group mx-2 d-flex align-content-middle">
+                    <label for="hoy" class="m-0 mr-1 d-flex justify-content-center align-self-center">Hoy</label>
+                    <input type="checkbox" id="hoy" name="hoy" th:field="*{hoy}">
+                </div>
                 <div class="form-group ml-2">
-                    <button type="reset" class="btn btn-outline-success">Borrar filtro</button>
+                    <button id="borrarFiltro" type="button" class="btn btn-outline-danger">Borrar filtro</button>
                 </div>
             </div>
 
@@ -87,5 +91,29 @@
     }
 </style>
 
+<script>
+    const fechaInicioInput = document.getElementById('inicio');
+    const fechaFinInput = document.getElementById('fin');
+    const hoyInput = document.getElementById('hoy');
+
+    function esHoy(){
+        const fechaInicio = fechaInicioInput.value;
+        const fechaFin = fechaFinInput.value;
+
+        return fechaInicio === fechaFin && fechaInicio === new Date().toISOString().split('T')[0];
+    }
+    document.getElementById('hoy').addEventListener('change', function () {
+        if (this.checked && !esHoy()) {
+            hoyInput.value = 'true';
+            document.getElementById('formFiltro').submit();
+        }
+    });
+    document.getElementById('borrarFiltro').addEventListener('click', function () {
+        hoyInput.value = 'false';
+        hoyInput.checked = false;
+        fechaFinInput.value = '';
+        fechaInicioInput.value = '';
+    });
+</script>
 </body>
 </html>
