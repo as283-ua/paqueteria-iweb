@@ -79,7 +79,7 @@ public class EnvioController {
         FiltroEnvios filtro = null;
         if (filtroEnvios != null){
             if(filtroEnvios.isHoy()){
-                filtro = new FiltroEnvios(true);
+                filtro = new FiltroEnvios(filtroEnvios);
                 filtroEnvios.setFechaInicio(LocalDate.now());
                 filtroEnvios.setFechaFin(LocalDate.now());
             } else {

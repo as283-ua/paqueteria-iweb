@@ -27,6 +27,10 @@
                     <label for="hoy" class="m-0 mr-1 d-flex justify-content-center align-self-center">Hoy</label>
                     <input type="checkbox" id="hoy" name="hoy" th:field="*{hoy}">
                 </div>
+                <div class="form-group mx-2 d-flex align-content-middle">
+                    <label for="no-entregado" class="m-0 mr-1 d-flex justify-content-center align-self-center">Por entregar</label>
+                    <input type="checkbox" id="no-entregado" name="no-entregado" th:field="*{porEntregar}">
+                </div>
                 <div class="form-group ml-2">
                     <button id="borrarFiltro" type="button" class="btn btn-outline-danger">Borrar filtro</button>
                 </div>
@@ -95,6 +99,7 @@
     const fechaInicioInput = document.getElementById('inicio');
     const fechaFinInput = document.getElementById('fin');
     const hoyInput = document.getElementById('hoy');
+    const porEntregarInput = document.getElementById('no-entregado');
 
     function esHoy(){
         const fechaInicio = fechaInicioInput.value;
@@ -102,15 +107,17 @@
 
         return fechaInicio === fechaFin && fechaInicio === new Date().toISOString().split('T')[0];
     }
-    document.getElementById('hoy').addEventListener('change', function () {
-        if (this.checked && !esHoy()) {
-            hoyInput.value = 'true';
-            document.getElementById('formFiltro').submit();
-        }
-    });
+    // document.getElementById('hoy').addEventListener('change', function () {
+    //     if (this.checked && !esHoy()) {
+    //         hoyInput.value = 'true';
+    //         document.getElementById('formFiltro').submit();
+    //     }
+    // });
     document.getElementById('borrarFiltro').addEventListener('click', function () {
         hoyInput.value = 'false';
         hoyInput.checked = false;
+        porEntregarInput.value = 'false';
+        porEntregarInput.checked = false;
         fechaFinInput.value = '';
         fechaInicioInput.value = '';
     });

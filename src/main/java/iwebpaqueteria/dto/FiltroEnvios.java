@@ -12,13 +12,9 @@ public class FiltroEnvios {
 
     boolean hoy = false;
 
-    public FiltroEnvios() {
-    }
+    boolean porEntregar = false;
 
-    public FiltroEnvios(boolean hoy) {
-        this.hoy = hoy;
-        fechaInicio = LocalDate.now().minusDays(1);
-        fechaFin = LocalDate.now().plusDays(1);
+    public FiltroEnvios() {
     }
 
     public FiltroEnvios(LocalDate fechaInicio, LocalDate fechaFin) {
@@ -30,6 +26,11 @@ public class FiltroEnvios {
         this.fechaInicio = rangoFechas.getFechaInicio();
         this.fechaFin = rangoFechas.getFechaFin();
         this.hoy = rangoFechas.isHoy();
+        if(isHoy()){
+            fechaInicio = LocalDate.now().minusDays(1);
+            fechaFin = LocalDate.now().plusDays(1);
+        }
+        this.porEntregar = rangoFechas.isPorEntregar();
     }
 
     public LocalDate getFechaInicio() {
@@ -55,5 +56,20 @@ public class FiltroEnvios {
 
     public void setHoy(boolean hoy) {
         this.hoy = hoy;
+    }
+
+    public boolean isPorEntregar() {
+        return porEntregar;
+    }
+
+    public void setPorEntregar(boolean porEntregar) {
+        this.porEntregar = porEntregar;
+    }
+
+    public boolean vacio(){
+        return !porEntregar &&
+                !hoy &&
+                fechaInicio == null &&
+                fechaFin == null;
     }
 }

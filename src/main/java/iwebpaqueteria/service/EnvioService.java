@@ -49,21 +49,25 @@ public class EnvioService {
     }
 
     @Transactional(readOnly = true)
-    public List<EnvioData> findAll(FiltroEnvios rangoFechas) {
-        if(rangoFechas == null) {
+    public List<EnvioData> findAll(FiltroEnvios filtroEnvios) {
+        if(filtroEnvios == null ||
+                (!filtroEnvios.isPorEntregar() &&
+                !filtroEnvios.isHoy() &&
+                filtroEnvios.getFechaFin() == null &&
+                filtroEnvios.getFechaInicio() == null)) {
             return findAll();
         }
 
-        logger.debug("Buscando todos los envíosc desde " + rangoFechas.getFechaInicio() + " hasta " + rangoFechas.getFechaFin());
+        logger.debug("Buscando todos los envíosc desde " + filtroEnvios.getFechaInicio() + " hasta " + filtroEnvios.getFechaFin());
 
         Set<Envio> envios = new HashSet<>((List<Envio>)envioRepository.findAll());
-        boolean todosEnvios = rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() == null;
+        boolean todosEnvios = filtroEnvios.vacio();
 
         if (todosEnvios) {
             return envios.stream().map(envio -> modelMapper.map(envio, EnvioData.class)).collect(Collectors.toList());
         }
 
-        return filtrarEnvioFecha(envios, rangoFechas);
+        return filtrarEnvios(envios, filtroEnvios);
     }
 
     @Transactional(readOnly = true)
@@ -243,45 +247,70 @@ public class EnvioService {
         return enviosReducidos;
     }
 
-    private List<EnvioData> filtrarEnvioFecha(Set<Envio> envios, FiltroEnvios rangoFechas) {
-        List<EnvioData> enviosReducidos = new ArrayList<>();
+    private boolean envioFinalizado(Estado cancelado, Estado entregado, Envio envio){
+        Set<Long> idEstados = envio.getHistoricos().stream().map(Historico::getEstadoId).collect(Collectors.toSet());
+        return idEstados.contains(cancelado.getId()) || idEstados.contains(entregado.getId());
+    }
+
+    private List<EnvioData> filtrarEnvios(Set<Envio> envios, FiltroEnvios filtroEnvios) {
+        List<EnvioData> enviosResult = new ArrayList<>();
         Estado enAlmacen = estadoRepository.findByNombre("En almacén").orElse(null);
+        Estado cancelado = estadoRepository.findByNombre("Cancelado").orElse(null);
+        Estado entregado = estadoRepository.findByNombre("Entregado").orElse(null);
 
         if (enAlmacen == null)
             throw new UsuarioServiceException("No existe el estado En almacén");
+        if (cancelado == null)
+            throw new UsuarioServiceException("No existe el estado Cancelado");
+        if (entregado == null)
+            throw new UsuarioServiceException("No existe el estado Entregado");
+
 
         for (Envio envio : envios) {
+            if(filtroEnvios.isPorEntregar() && envioFinalizado(cancelado, entregado, envio)){
+                continue;
+            }
+
             for(Historico historico : envio.getHistoricos()) {
+
                 if(!historico.getEstado().equals(enAlmacen)){
                     continue;
                 }
 
-                boolean soloInicio = rangoFechas.getFechaInicio() != null && rangoFechas.getFechaFin() == null
-                        && historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio());
+                boolean todasFechas = filtroEnvios.getFechaInicio() == null && filtroEnvios.getFechaFin() == null;
+                if(todasFechas){
+                    enviosResult.add(modelMapper.map(envio, EnvioData.class));
+                    break;
+                }
+
+                boolean soloInicio = filtroEnvios.getFechaInicio() != null && filtroEnvios.getFechaFin() == null;
                 if(soloInicio) {
-                    enviosReducidos.add(modelMapper.map(envio, EnvioData.class));
+                    if(historico.getFecha().toLocalDate().isAfter(filtroEnvios.getFechaInicio())){
+                        enviosResult.add(modelMapper.map(envio, EnvioData.class));
+                    }
                     break;
                 }
 
-                boolean soloFin = rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() != null
-                        && historico.getFecha().toLocalDate().isBefore(rangoFechas.getFechaFin());
+                boolean soloFin = filtroEnvios.getFechaInicio() == null && filtroEnvios.getFechaFin() != null;
                 if(soloFin) {
-                    enviosReducidos.add(modelMapper.map(envio, EnvioData.class));
+                    if(historico.getFecha().toLocalDate().isBefore(filtroEnvios.getFechaFin())){
+                        enviosResult.add(modelMapper.map(envio, EnvioData.class));
+                    }
                     break;
                 }
 
-                boolean enRango = historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio()) && historico.getFecha().toLocalDate().isBefore(rangoFechas.getFechaFin());
+                boolean enRango = historico.getFecha().toLocalDate().isAfter(filtroEnvios.getFechaInicio()) && historico.getFecha().toLocalDate().isBefore(filtroEnvios.getFechaFin());
                 if(enRango) {
-                    enviosReducidos.add(modelMapper.map(envio, EnvioData.class));
+                    enviosResult.add(modelMapper.map(envio, EnvioData.class));
                     break;
                 }
             }
         }
-        return enviosReducidos;
+        return enviosResult;
     }
 
     @Transactional
-    public List<EnvioReducidoData> enviosReducidosTienda(Long idTienda, FiltroEnvios rangoFechas) {
+    public List<EnvioReducidoData> enviosReducidosTienda(Long idTienda, FiltroEnvios filtroEnvios) {
         List<EnvioReducidoData> envios;
 
         Usuario tienda = usuarioRepository.findById(idTienda).orElse(null);
@@ -290,48 +319,48 @@ public class EnvioService {
 
         Set<Envio> envioEntities = tienda.getDireccion().getEnviosOrigen();
 
-        boolean todosEnvios = rangoFechas == null || rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() == null;
+        boolean todosEnvios = filtroEnvios == null || filtroEnvios.vacio();
 
         if(todosEnvios){
             envios = envioEntities.stream().map(envio -> modelMapper.map(envio, EnvioReducidoData.class)).collect(Collectors.toList());
             return envios;
         }
 
-        envios = filtrarEnviosFechaReducido(envioEntities, rangoFechas);
+        envios = filtrarEnviosFechaReducido(envioEntities, filtroEnvios);
         return envios;
     }
 
     @Transactional
-    public List<EnvioData> enviosRepartidor(Long repartidorId, FiltroEnvios rangoFechas) {
+    public List<EnvioData> enviosRepartidor(Long repartidorId, FiltroEnvios filtroEnvios) {
         Usuario repartidor = usuarioRepository.findById(repartidorId).orElse(null);
         if (repartidor == null)
             throw new UsuarioServiceException("Repartidor con ID " + repartidorId + " no existe");
 
         Set<Envio> envioEntities = repartidor.getEnvios();
 
-        boolean todosEnvios = rangoFechas == null || rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() == null;
+        boolean todosEnvios = filtroEnvios == null || filtroEnvios.vacio();
 
         if (todosEnvios) {
             return envioEntities.stream().map(envio -> modelMapper.map(envio, EnvioData.class)).collect(Collectors.toList());
         }
 
-        return filtrarEnvioFecha(envioEntities, rangoFechas);
+        return filtrarEnvios(envioEntities, filtroEnvios);
     }
 
     @Transactional
-    public List<EnvioData> enviosTienda(Long tiendaId, FiltroEnvios rangoFechas) {
+    public List<EnvioData> enviosTienda(Long tiendaId, FiltroEnvios filtroEnvios) {
         Usuario tienda = usuarioRepository.findById(tiendaId).orElse(null);
         if (tienda == null)
             throw new UsuarioServiceException("Tienda con ID " + tiendaId + " no existe");
 
         Set<Envio> envioEntities = tienda.getDireccion().getEnviosOrigen();
 
-        boolean todosEnvios = rangoFechas == null || rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() == null;
+        boolean todosEnvios = filtroEnvios == null || filtroEnvios.vacio();
 
         if (todosEnvios) {
             return envioEntities.stream().map(envio -> modelMapper.map(envio, EnvioData.class)).collect(Collectors.toList());
         }
 
-        return filtrarEnvioFecha(envioEntities, rangoFechas);
+        return filtrarEnvios(envioEntities, filtroEnvios);
     }
 }

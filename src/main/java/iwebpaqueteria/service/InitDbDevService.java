@@ -25,7 +25,7 @@ public class InitDbDevService {
     @Autowired
     private RolRepository rolRepository;
     @Autowired
-    private EnvioRepository envioRepository;
+    private EnvioService envioService;
     @Autowired
     private DireccionRepository direccionRepository;
     @Autowired
@@ -75,7 +75,8 @@ public class InitDbDevService {
         }
 
         Direccion direccionOrigenTienda1 = new Direccion("0300", "San Vicente", "Alicante", 1, 0, "Calle Alberto", "234567891", "Tienda 1");
-//        direccionOrigenTienda1 = direccionRepository.save(direccionOrigenTienda1);
+        Direccion direccionOrigenTienda2 = new Direccion("0300", "Alicante", "Alicante", 17, 0, "Calle Tienda 2", "123123112", "Tienda 2");
+
 
         Usuario tienda1 = new Usuario("tienda1@ua");
         tienda1.setNombre("Tienda 1");
@@ -86,13 +87,21 @@ public class InitDbDevService {
         tienda1.setDireccion(direccionOrigenTienda1);
         tienda1 = usuarioRepository.save(tienda1);
 
+        Usuario tienda2 = new Usuario("tienda2@ua");
+        tienda2.setNombre("Tienda 2");
+        tienda2.setContrasenya("123");
+        tienda2.setTelefono("2345678914");
+        tienda2.setRol(tienda);
+        tienda2.setAPIKey("1234567890");
+        tienda2.setDireccion(direccionOrigenTienda2);
+        tienda2 = usuarioRepository.save(tienda2);
+
         Direccion direccionDestino = new Direccion("0300", "San Vicente", "Alicante", 2, 1, "Calle Vista", "0000000", "Juan Carlos");
         direccionRepository.save(direccionDestino);
 
         Envio envio = new Envio(1, 1, 1, "observaciones", direccionOrigenTienda1, direccionDestino);
-        envio.addTarifa(tarifaCortaDistancia);
-        envio.addTarifa(tarifaBultos);
-        envioRepository.save(envio);
+
+        envioService.crearEnvio(1, 1,"observaciones", tienda1.getId(), direccionDestino.getId());
     }
 
 }
