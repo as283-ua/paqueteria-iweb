@@ -136,7 +136,6 @@ Parametros:
     "codigo": string,
     "peso": int,
     "precio": int,
-    "observaciones": string,
     "historicos": [
       {
         "estado": string,
