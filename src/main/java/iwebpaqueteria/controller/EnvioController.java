@@ -51,6 +51,15 @@ public class EnvioController {
         }
     }
 
+    private void comprobarUsuarioLogeadoRepartidor() {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado==null)
+            throw new UsuarioNoLogeadoException();
+        if(!"repartidor".equals(usuarioService.findById(idUsuarioLogeado).getRol().getNombre())){
+            throw new UsuarioSinPermisosException();
+        }
+    }
+
     @GetMapping("/")
     public String buscarEnvio(Model model) {
         Long idYo = managerUserSession.usuarioLogeado();
@@ -174,7 +183,7 @@ public class EnvioController {
     @PostMapping("/envios/{id}/avanzarEstado")
     public String avanzarEstadoEnvio(@PathVariable(value="id") Long idEnvio, @ModelAttribute AvanzarEstadoData avanzarEstadoData, Model model, HttpSession session){
 
-        comprobarUsuarioLogeadoWebMaster();
+        comprobarUsuarioLogeadoRepartidor();
         envioService.avanzarEstado(idEnvio, avanzarEstadoData.getObservaciones());
         return "redirect:/envios/" + idEnvio;
     }

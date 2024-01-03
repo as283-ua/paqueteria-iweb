@@ -95,16 +95,16 @@
                                 <input id="observaciones" class="form-control" name="observaciones" placeholder="Observaciones" type="text" th:field="*{observaciones}" required style="height: 38px; width: 300px;"/>
                             </div>
                             <button th:if="${estadoActual.getEstado().getId() == 1}" type="submit" class="ml-3 btn btn-success" style="height: 38px;">Marcar como Recogido</button>
-                            <button th:if="${estadoActual.getEstado().getId() == 2}" type="submit" class="ml-3 btn btn-succes" style="height: 38px;">Marcar como En reparto</button>
-                            <div class="d-flex" th:if="${estadoActual.getEstado().getId() == 3 || estadoActual.getEstado().getId() == 3}">
-                                <button type="submit" class="ml-3 btn btn-succes" style="height: 38px;">Marcar como Entregado</button>
+                            <button th:if="${estadoActual.getEstado().getId() == 2}" type="submit" class="ml-3 btn btn-success" style="height: 38px;">Marcar como En reparto</button>
+                            <div class="d-flex" th:if="${estadoActual.getEstado().getId() == 3 || estadoActual.getEstado().getId() == 4}">
+                                <button type="submit" class="ml-3 btn btn-success" style="height: 38px;">Marcar como Entregado</button>
                                 <button class="ml-3 btn btn-danger" style="height: 38px;">Marcar como Rechazado</button>
                                 <button class="ml-3 btn btn-warning" style="height: 38px;">Marcar como Ausente</button>
                             </div>
                         </div>
-                        <button class="btn btn-danger" style="height: 38px;">Deshacer ultimo cambio</button>
                     </form>
                 </div>
+                <button class="btn btn-danger" style="height: 38px;">Deshacer ultimo cambio</button>
             </div>
         </div>
     </div>
