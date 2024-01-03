@@ -4,9 +4,12 @@ import antlr.StringUtils;
 import iwebpaqueteria.authentication.ManagerUserSession;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
 import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
+import iwebpaqueteria.dto.DireccionData;
+import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.LoginData;
 import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.model.Usuario;
+import iwebpaqueteria.service.DireccionService;
 import iwebpaqueteria.service.EnvioService;
 import iwebpaqueteria.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class RepartidorController {
@@ -27,6 +33,19 @@ public class RepartidorController {
 
     @Autowired
     EnvioService envioService;
+
+    @Autowired
+    DireccionService direccionService;
+
+    public Map<Long, DireccionData> direccionesDeEnvios(List<EnvioData> envios){
+        Map<Long, DireccionData> result = new HashMap<>();
+
+        for (EnvioData envio : envios) {
+            result.put(envio.getId(), direccionService.findById(envio.getDireccionDestinoId()));
+        }
+
+        return result;
+    }
 
     private void comprobarUsuarioLogeadoWebMaster() {
         Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
@@ -59,6 +78,7 @@ public class RepartidorController {
         model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
         model.addAttribute("repartidor", usuarioService.findById(idUsu));
         model.addAttribute("envios", envioService.getEnviosRepartidor(idUsu));
+        model.addAttribute("direcciones", direccionesDeEnvios(envioService.getEnviosRepartidor(idUsu)));
 
         return "detalleRepartidor";
     }

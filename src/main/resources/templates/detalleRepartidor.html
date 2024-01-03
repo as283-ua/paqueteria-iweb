@@ -55,8 +55,8 @@
                     <td th:text="${envio.id}"></td>
                     <td th:text="${envio.peso}"></td>
                     <td th:text="${envio.observaciones}"></td>
-                    <td th:text="${envio.direccionDestino.codigoPostal}"></td>
-                    <td th:text="${envio.direccionDestino.calle}"></td>
+                    <td th:text="${direcciones.get(envio.id).codigoPostal}"></td>
+                    <td th:text="${direcciones.get(envio.id).calle}"></td>
                     <td th:if="${usuario.rol.nombre == 'webmaster' || usuario.rol.nombre == 'tienda'}" th:text="${envio.precio}"></td>
                     <td>
                         <a class="btn btn-warning" th:href="'/envios/' + ${envio.id}">Ver detalles</a>
