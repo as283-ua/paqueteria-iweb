@@ -108,6 +108,7 @@ Parametros:
 Status:
 - 204: En el histórico del envío se añade un nuevo estado: "Cancelado".
 - 400: Id no existe.
+- 400: Paquete ya enviado.
 - 401: API key no identificada o vacía.
 
 
