@@ -73,7 +73,7 @@ public class InitDbUtil {
         estados.add(crearEstadoIfNotExists("Ausente"));
         estados.add(crearEstadoIfNotExists("En reparto"));
         estados.add(crearEstadoIfNotExists("Entregado"));
-        estados.add(crearEstadoIfNotExists("Devuelto"));
+        estados.add(crearEstadoIfNotExists("Rechazado"));
         estados.add(crearEstadoIfNotExists("Cancelado"));
         return estados;
     }

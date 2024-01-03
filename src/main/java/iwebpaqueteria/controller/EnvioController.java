@@ -188,6 +188,22 @@ public class EnvioController {
         return "redirect:/envios/" + idEnvio;
     }
 
+    @PutMapping("/envios/{id}/ausente")
+    public String estadoEnvioAusente(@PathVariable(value="id") Long idEnvio, Model model, HttpSession session){
+
+        comprobarUsuarioLogeadoRepartidor();
+        envioService.estadoAusente(idEnvio);
+        return "redirect:/envios/" + idEnvio;
+    }
+
+    @PutMapping("/envios/{id}/rechazado")
+    public String estadoEnvioRechazado(@PathVariable(value="id") Long idEnvio, Model model, HttpSession session){
+
+        comprobarUsuarioLogeadoRepartidor();
+        envioService.rechazarEnvio(idEnvio);
+        return "redirect:/envios/" + idEnvio;
+    }
+
     @GetMapping("/buscarRepartidores")
     @ResponseBody
     public List<String> buscarRepartidores(@RequestParam String nombre) {

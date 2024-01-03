@@ -100,9 +100,9 @@ public class InitDbDevService {
         Direccion direccionDestino = new Direccion("0300", "San Vicente", "Alicante", 2, 1, "Calle Vista", "0000000", "Juan Carlos");
         direccionRepository.save(direccionDestino);
 
-        Envio envio = new Envio(1, 1, 1, "observaciones", direccionOrigenTienda1, direccionDestino);
-
         envioService.crearEnvio(1, 1,"observaciones", tienda1.getId(), direccionDestino.getId());
+
+        envioService.crearEnvio(1, 1,"observaciones envio 2", tienda1.getId(), direccionDestino.getId());
     }
 
 }
