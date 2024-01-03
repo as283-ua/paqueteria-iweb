@@ -50,11 +50,12 @@ public class InitDbDevService {
         Tarifa tarifaBultos = tarifas.get(2);
 
         Estado enAlmacen = estados.get(0);
-        Estado enviado = estados.get(1);
-        Estado enReparto = estados.get(2);
-        Estado entregado = estados.get(3);
-        Estado devuelto = estados.get(4);
-        Estado cancelado = estados.get(5);
+        Estado recogido = estados.get(1);
+        Estado ausente = estados.get(2);
+        Estado enReparto = estados.get(3);
+        Estado entregado = estados.get(4);
+        Estado devuelto = estados.get(5);
+        Estado cancelado = estados.get(6);
 
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");

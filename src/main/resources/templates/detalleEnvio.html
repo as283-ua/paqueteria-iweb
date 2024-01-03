@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div th:if="${asignarRepartidor != null}">
+    <div th:if="${'webmaster'.equals(usuario.getRol().getNombre()) && asignarRepartidor != null}">
         <form method="post" th:action="@{/envios/{id}/repartidor(id=${envio.id})}" th:object="${asignarRepartidor}">
             <div class="row ml-1 mt-3">
                 <div class="form-group">
@@ -77,10 +77,40 @@
             </ul>
         </div>
     </div>
-</div>
-<div class="pt-3 pl-3">
-    <a class="btn btn-primary" th:href="@{/envios}">Volver</a>
-</div>
+    <div class="row mt-3">
+        <div class="col">
+            <h3>Historico estados</h3>
+            <div>Estado actual:</div>
+            <div th:text="${estadoActual.getEstado().getId()}"></div>
+            <div th:text="${estadoActual.getEstado().getNombre()}"></div>
+            <div th:text="${estadoActual.getFecha()}"></div>
+            <div th:text="${estadoActual.getObservaciones()}"></div>
+            <!-- Sustituir estos 3 div por la tabla con el historico de estados -->
+
+            <div th:if="${'repartidor'.equals(usuario.getRol().getNombre())}">
+                <div th:if="${estadoActual.getEstado().getId() == 1 || estadoActual.getEstado().getId() == 2 || estadoActual.getEstado().getId() == 3 || estadoActual.getEstado().getId() == 4}">
+                    <form method="post" th:action="@{/envios/{id}/avanzarEstado(id=${envio.id})}" th:object="${avanzarEstado}">
+                        <div class="row ml-1 mt-3">
+                            <div class="form-group">
+                                <input id="observaciones" class="form-control" name="observaciones" placeholder="Observaciones" type="text" th:field="*{observaciones}" required style="height: 38px; width: 300px;"/>
+                            </div>
+                            <button th:if="${estadoActual.getEstado().getId() == 1}" type="submit" class="ml-3 btn btn-success" style="height: 38px;">Marcar como Recogido</button>
+                            <button th:if="${estadoActual.getEstado().getId() == 2}" type="submit" class="ml-3 btn btn-succes" style="height: 38px;">Marcar como En reparto</button>
+                            <div class="d-flex" th:if="${estadoActual.getEstado().getId() == 3 || estadoActual.getEstado().getId() == 3}">
+                                <button type="submit" class="ml-3 btn btn-succes" style="height: 38px;">Marcar como Entregado</button>
+                                <button class="ml-3 btn btn-danger" style="height: 38px;">Marcar como Rechazado</button>
+                                <button class="ml-3 btn btn-warning" style="height: 38px;">Marcar como Ausente</button>
+                            </div>
+                        </div>
+                        <button class="btn btn-danger" style="height: 38px;">Deshacer ultimo cambio</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="pt-3 pl-3">
+        <a class="btn btn-primary" th:href="@{/envios}">Volver</a>
+    </div>
 </div>
 
 <div th:replace="fragments::javascript"/>

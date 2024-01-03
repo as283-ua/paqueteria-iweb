@@ -5,6 +5,7 @@ import iwebpaqueteria.controller.exception.EnvioNotFoundException;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
 import iwebpaqueteria.dto.*;
 import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
+import iwebpaqueteria.model.Historico;
 import iwebpaqueteria.service.DireccionService;
 import iwebpaqueteria.service.UsuarioService;
 import iwebpaqueteria.service.EnvioService;
@@ -135,11 +136,17 @@ public class EnvioController {
         else
             model.addAttribute("repartidor", usuarioService.findById(envio.getRepartidorId()).getNombre());
 
+        Historico estadoActual = envioService.getEstadoActual(idEnvio);
+
+        if(estadoActual.getEstado().getId() == 1 || estadoActual.getEstado().getId() == 2 || estadoActual.getEstado().getId() == 3 || estadoActual.getEstado().getId() == 4)
+            model.addAttribute("avanzarEstado", new AvanzarEstadoData());
+
         model.addAttribute("usuario", usuario);
         model.addAttribute("envio", envio);
         model.addAttribute("direccionOrigen", direccionService.findById(envio.getDireccionOrigenId()));
         model.addAttribute("direccionDestino", direccionService.findById(envio.getDireccionDestinoId()));
         model.addAttribute("tarifas", envioService.tarifasDeEnvio(idEnvio));
+        model.addAttribute("estadoActual", estadoActual);
 
         return "detalleEnvio";
     }
@@ -161,6 +168,14 @@ public class EnvioController {
         }
 
 
+        return "redirect:/envios/" + idEnvio;
+    }
+
+    @PostMapping("/envios/{id}/avanzarEstado")
+    public String avanzarEstadoEnvio(@PathVariable(value="id") Long idEnvio, @ModelAttribute AvanzarEstadoData avanzarEstadoData, Model model, HttpSession session){
+
+        comprobarUsuarioLogeadoWebMaster();
+        envioService.avanzarEstado(idEnvio, avanzarEstadoData.getObservaciones());
         return "redirect:/envios/" + idEnvio;
     }
 
