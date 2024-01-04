@@ -290,6 +290,10 @@ public class EnvioService {
         Envio envio = envioRepository.findByCodigo(codigoEnvio).
                 orElseThrow(() -> new EnvioServiceException("No existe envío con código " + codigoEnvio));
 
+        if(!comprobarCancelable(envio)){
+            throw new EnvioServiceException("El envío ya se ha enviado. No se puede cancelar");
+        }
+
         Estado estado = estadoRepository.findByNombre("Cancelado").
                 orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado Cancelado"));
 
@@ -440,4 +444,8 @@ public class EnvioService {
         historicoRepository.save(nuevoEstado);
     }
 
+    private boolean comprobarCancelable(Envio envio) {
+        return envio.getHistoricos().size() == 1;
+
+    }
 }
