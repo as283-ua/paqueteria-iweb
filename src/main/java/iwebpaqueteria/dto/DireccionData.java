@@ -23,10 +23,10 @@ public class DireccionData {
         @NotNull(message = "La provincia es un campo obligatorio")
         @NotEmpty(message = "La provincia no puede estar vacía")
         private String provincia;
-        @NotNull(message = "El número es un campo obligatorio")
+        @Positive(message = "El número es un campo obligatorio mayor que 0")
         private int numero;
-        @NotNull(message = "La planta es un campo obligatorio")
-        private int planta;
+        @Positive(message = "La planta es un campo obligatorio mayor que 0")
+        private int planta = -1;
         @NotNull(message = "El nombre de calle es un campo obligatorio")
         private String calle;
         @NotNull(message = "El número de teléfono es un campo obligatorio")

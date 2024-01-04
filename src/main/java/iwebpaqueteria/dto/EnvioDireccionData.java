@@ -7,10 +7,11 @@ import java.util.Objects;
 
 public class EnvioDireccionData {
     @NotNull(message = "El peso es un campo obligatorio")
+    @Min(value = 1, message = "El peso es un campo obligatorio mayor que 0")
     private float peso;
     private String observaciones;
     @NotNull(message = "El número de bultos es un campo obligatorio")
-    @Min(value = 1, message = "El número de bultos debe ser mayor que 0")
+    @Min(value = 1, message = "El número de bultos es un campo obligatorio mayor que 0")
     private int bultos;
     @NotNull(message = "La dirección de destino es un campo obligatorio")
     @Valid
