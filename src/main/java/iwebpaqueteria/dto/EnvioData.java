@@ -1,10 +1,6 @@
 package iwebpaqueteria.dto;
 
 
-import iwebpaqueteria.model.Direccion;
-import iwebpaqueteria.model.Historico;
-import iwebpaqueteria.model.HistoricoId;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -19,7 +15,7 @@ public class EnvioData {
     private Long direccionOrigenId;
     private Long direccionDestinoId;
     private Long repartidorId;
-    private List<HistoricoId> historicoIds = new ArrayList<>();
+    private List<Long> historicoIds = new ArrayList<>();
     private int bultos;
     private String codigo;
 
@@ -57,9 +53,9 @@ public class EnvioData {
 
     public void setRepartidorId(Long repartidorId) { this.repartidorId = repartidorId; }
 
-    public List<HistoricoId> getHistoricoIds() { return historicoIds; }
+    public List<Long> getHistoricoIds() { return historicoIds; }
 
-    public void setHistoricoIds(List<HistoricoId> historicoIds) { this.historicoIds = historicoIds; }
+    public void setHistoricoIds(List<Long> historicoIds) { this.historicoIds = historicoIds; }
 
     public int getBultos() {
         return bultos;

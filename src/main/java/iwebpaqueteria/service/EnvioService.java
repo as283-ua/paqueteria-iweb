@@ -248,7 +248,7 @@ public class EnvioService {
     }
 
     private boolean envioFinalizado(Estado cancelado, Estado entregado, Envio envio){
-        Set<Long> idEstados = envio.getHistoricos().stream().map(Historico::getEstadoId).collect(Collectors.toSet());
+        Set<Long> idEstados = envio.getHistoricos().stream().map(h -> h.getEstado().getId()).collect(Collectors.toSet());
         return idEstados.contains(cancelado.getId()) || idEstados.contains(entregado.getId());
     }
 
@@ -379,7 +379,7 @@ public class EnvioService {
         if(envio == null)
             throw new IllegalArgumentException("No existe envío con id " + idEnvio);
 
-        Long estadoActual = getEstadoActual(idEnvio).getEstadoId();
+        Long estadoActual = getEstadoActual(idEnvio).getEstado().getId();
 
         if(estadoActual == 5 || estadoActual == 6 || estadoActual == 7)
             throw new IllegalArgumentException("El envío ya está en el estado final");
@@ -405,7 +405,7 @@ public class EnvioService {
         if(envio == null)
             throw new IllegalArgumentException("No existe envío con id " + idEnvio);
 
-        Long estadoActual = getEstadoActual(idEnvio).getEstadoId();
+        Long estadoActual = getEstadoActual(idEnvio).getEstado().getId();
 
         if(estadoActual == 5 || estadoActual == 6 || estadoActual == 7)
             throw new IllegalArgumentException("El envío ya está en el estado final");
@@ -426,7 +426,7 @@ public class EnvioService {
         if(envio == null)
             throw new IllegalArgumentException("No existe envío con id " + idEnvio);
 
-        Long estadoActual = getEstadoActual(idEnvio).getEstadoId();
+        Long estadoActual = getEstadoActual(idEnvio).getEstado().getId();
 
         if(estadoActual == 5 || estadoActual == 6 || estadoActual == 7)
             throw new IllegalArgumentException("El envío ya está en el estado final");

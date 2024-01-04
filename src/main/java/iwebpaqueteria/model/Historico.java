@@ -10,14 +10,11 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "historicos")
-@IdClass(HistoricoId.class)
 public class Historico {
 
     @Id
-    private Long envioId;
-
-    @Id
-    private Long estadoId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(updatable = false)
     @CreationTimestamp
@@ -26,13 +23,9 @@ public class Historico {
     private String observaciones;
 
     @ManyToOne
-    @MapsId("envioId")
-    @JoinColumn(name = "envioId")
     private Envio envio;
 
     @ManyToOne
-    @MapsId("estadoId")
-    @JoinColumn(name = "estadoId")
     private Estado estado;
 
     public Historico() {}
@@ -42,9 +35,14 @@ public class Historico {
         envio.addHistorico(this);
         this.estado = estado;
         estado.getHistoricos().add(this);
+    }
 
-        this.envioId = envio.getId();
-        this.estadoId = estado.getId();
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public LocalDateTime getFecha() {
@@ -71,22 +69,6 @@ public class Historico {
         this.estado = estado;
     }
 
-    public Long getEnvioId() {
-        return envioId;
-    }
-
-    public void setEnvioId(Long envioId) {
-        this.envioId = envioId;
-    }
-
-    public Long getEstadoId() {
-        return estadoId;
-    }
-
-    public void setEstadoId(Long estadoId) {
-        this.estadoId = estadoId;
-    }
-
     public String getObservaciones() {
         return observaciones;
     }
@@ -100,11 +82,11 @@ public class Historico {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Historico historico = (Historico) o;
-        return Objects.equals(fecha, historico.fecha) && Objects.equals(envioId, historico.envioId) && Objects.equals(estadoId, historico.estadoId);
+        return Objects.equals(fecha, historico.fecha) && id.equals(historico.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(envioId, estadoId);
+        return Objects.hash(id);
     }
 }
