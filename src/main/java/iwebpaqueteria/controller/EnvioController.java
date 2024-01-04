@@ -184,6 +184,11 @@ public class EnvioController {
     public String avanzarEstadoEnvio(@PathVariable(value="id") Long idEnvio, @ModelAttribute AvanzarEstadoData avanzarEstadoData, Model model, HttpSession session){
 
         comprobarUsuarioLogeadoRepartidor();
+        Long repEnvio = envioService.recuperarEnvio(idEnvio).getRepartidorId();
+        Long logeado = managerUserSession.usuarioLogeado();
+        if(!envioService.recuperarEnvio(idEnvio).getRepartidorId().equals(managerUserSession.usuarioLogeado()))
+            throw new UsuarioSinPermisosException();
+
         envioService.avanzarEstado(idEnvio, avanzarEstadoData.getObservaciones());
         return "redirect:/envios/" + idEnvio;
     }
@@ -192,6 +197,9 @@ public class EnvioController {
     public String estadoEnvioAusente(@PathVariable(value="id") Long idEnvio, Model model, HttpSession session){
 
         comprobarUsuarioLogeadoRepartidor();
+        if(!envioService.recuperarEnvio(idEnvio).getRepartidorId().equals(managerUserSession.usuarioLogeado()))
+            throw new UsuarioSinPermisosException();
+
         envioService.estadoAusente(idEnvio);
         return "redirect:/envios/" + idEnvio;
     }
@@ -200,7 +208,21 @@ public class EnvioController {
     public String estadoEnvioRechazado(@PathVariable(value="id") Long idEnvio, Model model, HttpSession session){
 
         comprobarUsuarioLogeadoRepartidor();
+        if(!envioService.recuperarEnvio(idEnvio).getRepartidorId().equals(managerUserSession.usuarioLogeado()))
+            throw new UsuarioSinPermisosException();
+
         envioService.rechazarEnvio(idEnvio);
+        return "redirect:/envios/" + idEnvio;
+    }
+
+    @PutMapping("/envios/{id}/deshacer")
+    public String estadoEnvioDeshacer(@PathVariable(value="id") Long idEnvio, Model model, HttpSession session){
+
+        comprobarUsuarioLogeadoRepartidor();
+        if(!envioService.recuperarEnvio(idEnvio).getRepartidorId().equals(managerUserSession.usuarioLogeado()))
+            throw new UsuarioSinPermisosException();
+
+        envioService.deshacerEstadoEnvio(idEnvio);
         return "redirect:/envios/" + idEnvio;
     }
 

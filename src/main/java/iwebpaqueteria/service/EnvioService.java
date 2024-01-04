@@ -369,7 +369,7 @@ public class EnvioService {
         if(envio == null)
             throw new IllegalArgumentException("No existe envío con id " + id);
 
-        return envio.getHistoricos().stream().max(Comparator.comparing(Historico::getFecha)).get();
+        return envio.getHistoricos().stream().max(Comparator.comparing(Historico::getFecha)).orElse(null);
     }
 
     @Transactional
@@ -440,4 +440,17 @@ public class EnvioService {
         historicoRepository.save(nuevoEstado);
     }
 
+    @Transactional
+    public void deshacerEstadoEnvio(Long idEnvio){
+        Envio envio = envioRepository.findById(idEnvio).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + idEnvio);
+
+        Historico estadoActual = getEstadoActual(idEnvio);
+
+        if(estadoActual.getEstado().getId() == 1)
+            throw new IllegalArgumentException("El envío ya está en el estado inicial");
+
+        historicoRepository.delete(estadoActual);
+    }
 }

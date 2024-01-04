@@ -104,7 +104,7 @@
                         </div>
                     </form>
                 </div>
-                <button class="btn btn-danger" style="height: 38px;">Deshacer ultimo cambio</button>
+                <button th:if="${estadoActual.getEstado().getId() != 1}" class="btn btn-danger" style="height: 38px;" th:onClick="'callPut(\'/envios/' + ${envio.id} + '/deshacer\')'">Deshacer ultimo cambio</button>
             </div>
         </div>
     </div>
