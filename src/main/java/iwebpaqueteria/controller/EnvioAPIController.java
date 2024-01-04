@@ -32,6 +32,10 @@ public class EnvioAPIController {
     DireccionService direccionService;
 
     private UsuarioData validarApikey(String apiKey){
+        if(apiKey == null){
+            throw new UsuarioSinPermisosException();
+        }
+
         UsuarioData usuario = usuarioService.findByAPIKey(apiKey);
         if (usuario == null) {
             throw new UsuarioSinPermisosException();
@@ -40,7 +44,7 @@ public class EnvioAPIController {
     }
 
     @PostMapping(value = "/envios", consumes = "application/json", produces = "application/json")
-    public Map<String, Object> crearEnvio(@Valid @RequestBody EnvioDireccionData envioDireccionData, @RequestHeader("Authorization") String apiKey) {
+    public Map<String, Object> crearEnvio(@Valid @RequestBody EnvioDireccionData envioDireccionData, @RequestHeader(value = "Authorization", required = false) String apiKey) {
         logger.debug("POST /envios");
         Map<String, Object> response = new HashMap<>();
 
@@ -59,7 +63,7 @@ public class EnvioAPIController {
     }
 
     @PostMapping(value = "/envios/{codigo}/historico/cancelar", consumes = "application/json", produces = "application/json")
-    public void cancelarEnvío(@PathVariable(value="codigo") String codigoEnvio, @RequestHeader("Authorization") String apiKey, @RequestBody(required = false) Map<String, String> body) {
+    public void cancelarEnvío(@PathVariable(value="codigo") String codigoEnvio, @RequestHeader(value = "Authorization", required = false) String apiKey, @RequestBody(required = false) Map<String, String> body) {
         UsuarioData tienda = validarApikey(apiKey);
 
         String observaciones = body.get("observaciones");
@@ -85,7 +89,7 @@ public class EnvioAPIController {
     }
 
     @GetMapping(value = "/envios", produces = "application/json")
-    public List<EnvioReducidoData> enviosDeTienda(@RequestHeader("Authorization") String apiKey, @RequestBody(required = false) FiltroEnvios rangoFechas) {
+    public List<EnvioReducidoData> enviosDeTienda(@RequestHeader(value = "Authorization", required = false) String apiKey, @RequestBody(required = false) FiltroEnvios rangoFechas) {
         UsuarioData tienda = validarApikey(apiKey);
 
         if (rangoFechas != null){
