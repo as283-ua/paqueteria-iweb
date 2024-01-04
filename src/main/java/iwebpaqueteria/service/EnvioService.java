@@ -76,7 +76,7 @@ public class EnvioService {
     }
 
     private boolean envioFinalizado(Estado cancelado, Estado entregado, Envio envio){
-        Set<Long> idEstados = envio.getHistoricos().stream().map(Historico::getEstadoId).collect(Collectors.toSet());
+        Set<Long> idEstados = envio.getHistoricos().stream().map(h -> h.getEstado().getId()).collect(Collectors.toSet());
         return idEstados.contains(cancelado.getId()) || idEstados.contains(entregado.getId());
     }
 
@@ -362,4 +362,82 @@ public class EnvioService {
 
         return filtrarEnvios(envioEntities, filtroEnvios);
     }
+
+    @Transactional(readOnly = true)
+    public Historico getEstadoActual(Long id){
+        Envio envio = envioRepository.findById(id).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + id);
+
+        return envio.getHistoricos().stream().max(Comparator.comparing(Historico::getFecha)).get();
+    }
+
+    @Transactional
+    public void avanzarEstado(Long idEnvio, String observaciones){
+        Envio envio = envioRepository.findById(idEnvio).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + idEnvio);
+
+        Long estadoActual = getEstadoActual(idEnvio).getEstado().getId();
+
+        if(estadoActual == 5 || estadoActual == 6 || estadoActual == 7)
+            throw new IllegalArgumentException("El envío ya está en el estado final");
+
+        Estado estadoSiguiente;
+
+        if(estadoActual == 1)
+            estadoSiguiente = estadoRepository.findByNombre("Recogido por repartidor").orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado Recogido por repartidor"));
+        else if(estadoActual == 2 || estadoActual == 3) //tanto si estaba recogido como ausente el siguiente es En reparto
+            estadoSiguiente = estadoRepository.findByNombre("En reparto").orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado En reparto"));
+        else
+            estadoSiguiente = estadoRepository.findByNombre("Entregado").orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado Entregado"));
+
+        Historico nuevoEstado = new Historico(envio, estadoSiguiente);
+        nuevoEstado.setObservaciones(observaciones);
+
+        historicoRepository.save(nuevoEstado);
+    }
+
+    @Transactional
+    public void estadoAusente(Long idEnvio){
+        Envio envio = envioRepository.findById(idEnvio).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + idEnvio);
+
+        Long estadoActual = getEstadoActual(idEnvio).getEstado().getId();
+
+        if(estadoActual == 5 || estadoActual == 6 || estadoActual == 7)
+            throw new IllegalArgumentException("El envío ya está en el estado final");
+        else if(estadoActual != 4)
+            throw new IllegalArgumentException("El envío no está en estado En reparto");
+
+        Estado estadoSiguiente = estadoRepository.findByNombre("Ausente").orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado Ausente"));
+
+        Historico nuevoEstado = new Historico(envio, estadoSiguiente);
+        nuevoEstado.setObservaciones("Ausente en el domicilio");
+
+        historicoRepository.save(nuevoEstado);
+    }
+
+    @Transactional
+    public void rechazarEnvio(Long idEnvio){
+        Envio envio = envioRepository.findById(idEnvio).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + idEnvio);
+
+        Long estadoActual = getEstadoActual(idEnvio).getEstado().getId();
+
+        if(estadoActual == 5 || estadoActual == 6 || estadoActual == 7)
+            throw new IllegalArgumentException("El envío ya está en el estado final");
+        else if(estadoActual != 4)
+            throw new IllegalArgumentException("El envío no está en estado En reparto");
+
+        Estado estadoSiguiente = estadoRepository.findByNombre("Rechazado").orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado Rechazado"));
+
+        Historico nuevoEstado = new Historico(envio, estadoSiguiente);
+        nuevoEstado.setObservaciones("Rechazado por el cliente");
+
+        historicoRepository.save(nuevoEstado);
+    }
+
 }

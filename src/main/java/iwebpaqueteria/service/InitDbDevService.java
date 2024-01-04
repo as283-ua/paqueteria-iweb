@@ -50,11 +50,12 @@ public class InitDbDevService {
         Tarifa tarifaBultos = tarifas.get(2);
 
         Estado enAlmacen = estados.get(0);
-        Estado enviado = estados.get(1);
-        Estado enReparto = estados.get(2);
-        Estado entregado = estados.get(3);
-        Estado devuelto = estados.get(4);
-        Estado cancelado = estados.get(5);
+        Estado recogido = estados.get(1);
+        Estado ausente = estados.get(2);
+        Estado enReparto = estados.get(3);
+        Estado entregado = estados.get(4);
+        Estado devuelto = estados.get(5);
+        Estado cancelado = estados.get(6);
 
         Usuario usuario = new Usuario("user@ua");
         usuario.setNombre("Usuario Ejemplo");
@@ -99,9 +100,9 @@ public class InitDbDevService {
         Direccion direccionDestino = new Direccion("0300", "San Vicente", "Alicante", 2, 1, "Calle Vista", "0000000", "Juan Carlos");
         direccionRepository.save(direccionDestino);
 
-        Envio envio = new Envio(1, 1, 1, "observaciones", direccionOrigenTienda1, direccionDestino);
-
         envioService.crearEnvio(1, 1,"observaciones", tienda1.getId(), direccionDestino.getId());
+
+        envioService.crearEnvio(1, 1,"observaciones envio 2", tienda1.getId(), direccionDestino.getId());
     }
 
 }

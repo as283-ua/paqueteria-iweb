@@ -4,14 +4,9 @@ import iwebpaqueteria.dto.DireccionData;
 import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.EnvioReducidoData;
 import iwebpaqueteria.dto.UsuarioData;
-import iwebpaqueteria.model.Estado;
-import iwebpaqueteria.model.Historico;
-import iwebpaqueteria.model.HistoricoId;
 import iwebpaqueteria.repository.EstadoRepository;
 import iwebpaqueteria.repository.HistoricoRepository;
-import iwebpaqueteria.repository.UsuarioRepository;
 import iwebpaqueteria.util.InitDbUtil;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +15,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

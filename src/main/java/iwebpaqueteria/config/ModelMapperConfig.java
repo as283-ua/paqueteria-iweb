@@ -4,13 +4,10 @@ import iwebpaqueteria.dto.EnvioData;
 import iwebpaqueteria.dto.HistoricoData;
 import iwebpaqueteria.model.Envio;
 import iwebpaqueteria.model.Historico;
-import iwebpaqueteria.model.HistoricoId;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.text.SimpleDateFormat;
 
 @Configuration
 public class ModelMapperConfig {
@@ -39,7 +36,7 @@ public class ModelMapperConfig {
                 envioData.setDireccionDestinoId(envio.getDireccionDestino().getId());
                 envioData.setDireccionOrigenId(envio.getDireccionOrigen().getId());
                 envioData.setHistoricoIds(envio.getHistoricos().stream().
-                        map(historico -> new HistoricoId(historico.getEnvioId(), historico.getEstadoId())).
+                        map(Historico::getId).
                         collect(java.util.stream.Collectors.toList()));
                 envioData.setId(envio.getId());
                 envioData.setObservaciones(envio.getObservaciones());
