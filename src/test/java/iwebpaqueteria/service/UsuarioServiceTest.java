@@ -3,6 +3,8 @@ package iwebpaqueteria.service;
 import iwebpaqueteria.dto.DireccionData;
 import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.repository.UsuarioRepository;
+import iwebpaqueteria.util.InitDbUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,6 +17,16 @@ public class UsuarioServiceTest {
 
     @Autowired
     private UsuarioService usuarioService;
+    @Autowired
+    private InitDbUtil initDbUtil;
+
+
+    @BeforeEach
+    public void init(){
+        initDbUtil.initRoles();
+        initDbUtil.initEstados();
+        initDbUtil.initTarifas();
+    }
 
     @Test
     public void registrarTiendaTest() {

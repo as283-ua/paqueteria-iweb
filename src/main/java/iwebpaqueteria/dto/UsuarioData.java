@@ -17,8 +17,8 @@ public class UsuarioData {
     private String telefono;
     private String APIKey;
     private Direccion direccion;
-    private Rol rol;
-    private Set<Envio> envios;
+    private RolData rol;
+    private Set<EnvioData> envios;
 
 // Getters y setters
 
@@ -50,13 +50,13 @@ public class UsuarioData {
 
     public void setDireccion(Direccion direccion) { this.direccion = direccion; }
 
-    public Rol getRol() { return rol; }
+    public RolData getRol() { return rol; }
 
-    public void setRol(Rol rol) { this.rol = rol; }
+    public void setRol(RolData rol) { this.rol = rol; }
 
-    public Set<Envio> getEnvios() { return envios; }
+    public Set<EnvioData> getEnvios() { return envios; }
 
-    public void setEnvios(Set<Envio> envios) { this.envios = envios; }
+    public void setEnvios(Set<EnvioData> envios) { this.envios = envios; }
 
     // Sobreescribimos equals y hashCode para que dos usuarios sean iguales
     // si tienen el mismo ID (ignoramos el resto de atributos)

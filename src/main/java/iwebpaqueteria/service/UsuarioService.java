@@ -97,9 +97,10 @@ public class UsuarioService {
         else if (usuario.getContrasenya() == null)
             throw new UsuarioServiceException("El usuario no tiene password");
         else {
-            Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
             Rol rol = rolRepository.findByNombre("tienda").
                     orElseThrow(() -> new UsuarioServiceException("No existe el rol tienda"));
+            usuario.setRol(modelMapper.map(rol, RolData.class));
+            Usuario usuarioNuevo = modelMapper.map(usuario, Usuario.class);
 
             usuarioNuevo.setRol(rol);
             usuarioNuevo.setAPIKey(generarApiKey());
