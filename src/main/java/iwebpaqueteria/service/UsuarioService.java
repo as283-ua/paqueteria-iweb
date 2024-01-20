@@ -98,6 +98,10 @@ public class UsuarioService {
             throw new UsuarioServiceException("El usuario no tiene password");
         else {
             Usuario usu = modelMapper.map(usuario, Usuario.class);
+            if(!usu.getEmail().equals(usuarioBD.get().getEmail()) &&
+                    usuarioRepository.findByEmail(usu.getEmail()).isPresent())
+                throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
+
             usu.setId(idUsu);
             Rol rol = rolRepository.findByNombre("repartidor").orElse(null);
             usu.setRol(rol);
