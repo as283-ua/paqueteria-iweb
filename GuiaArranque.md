@@ -8,7 +8,8 @@ Hay una [imagen docker](https://hub.docker.com/r/as283/paqueteria-iweb) disponib
 
 Esto lanza la versión de desarrollo con datos de prueba. Los importantes son los de las tiendas, que podeis usar para 
 realizar la peticiones a la API REST. La tienda1, con email "tienda1@ua" y contraseña "123", y la tienda2, con email 
-"tienda2@ua" y contraseña "123".
+"tienda2@ua" y contraseña "123". Estos datos los podeis consultar en el fichero `InitDbDevService.java` en la carpeta de
+servicios.
 
 Las API keys usadas para estos dos usuarios son "123456789" y "1234567890" respectivamente. Estos se deben usar en las
 peticiones a la API REST añadiendolo en el header "Authorization" como valor. La API key es única e identifica a la 
