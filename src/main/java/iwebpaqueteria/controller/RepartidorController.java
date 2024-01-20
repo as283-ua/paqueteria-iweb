@@ -121,8 +121,7 @@ public class RepartidorController {
             return "redirect:/repartidores";
         }
 
-        UsuarioData repartidor = new UsuarioData();
-        repartidor.setId(idUsu);
+        UsuarioData repartidor = usuarioService.findById(idUsu);
         model.addAttribute("repartidor", repartidor);
         model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
 
