@@ -146,7 +146,7 @@ public class RepartidorController {
             return "formModificarRepartidor";
         }
 
-        usuarioService.registrarRepartidor(repartidor);
+        usuarioService.modificarRepartidor(repartidor, idUsu);
 
         return "redirect:/repartidores";
     }

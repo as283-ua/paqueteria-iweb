@@ -88,6 +88,25 @@ public class UsuarioService {
     }
 
     @Transactional
+    public UsuarioData modificarRepartidor(UsuarioData usuario, Long idUsu) {
+        Optional<Usuario> usuarioBD = usuarioRepository.findById(idUsu);
+        if (usuarioBD.isEmpty())
+            throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " no está registrado");
+        else if (usuario.getEmail() == null)
+            throw new UsuarioServiceException("El usuario no tiene email");
+        else if (usuario.getContrasenya() == null)
+            throw new UsuarioServiceException("El usuario no tiene password");
+        else {
+            Usuario usu = modelMapper.map(usuario, Usuario.class);
+            usu.setId(idUsu);
+            Rol rol = rolRepository.findByNombre("repartidor").orElse(null);
+            usu.setRol(rol);
+            usu = usuarioRepository.save(usu);
+            return modelMapper.map(usu, UsuarioData.class);
+        }
+    }
+
+    @Transactional
     public UsuarioData registrarTienda(UsuarioData usuario, DireccionData direccion) {
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
         if (usuarioBD.isPresent())
