@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -89,7 +91,7 @@ public class EnvioAPIController {
     }
 
     @GetMapping(value = "/envios", produces = "application/json")
-    public List<EnvioReducidoData> enviosDeTienda(@RequestHeader(value = "Authorization", required = false) String apiKey, @RequestBody(required = false) FiltroEnvios rangoFechas) {
+    public List<Map<String, Object>> enviosDeTienda(@RequestHeader(value = "Authorization", required = false) String apiKey, @RequestBody(required = false) FiltroEnvios rangoFechas) {
         UsuarioData tienda = validarApikey(apiKey);
 
         if (rangoFechas != null){

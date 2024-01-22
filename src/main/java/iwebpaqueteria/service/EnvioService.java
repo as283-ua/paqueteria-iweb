@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,8 +39,8 @@ public class EnvioService {
     @Autowired
     private HistoricoRepository historicoRepository;
 
-    private List<EnvioReducidoData> filtrarEnviosFechaReducido(Set<Envio> envios, FiltroEnvios rangoFechas) {
-        List<EnvioReducidoData> enviosReducidos = new ArrayList<>();
+    private List<Map<String, Object>> filtrarEnviosFechaReducido(Set<Envio> envios, FiltroEnvios rangoFechas) {
+        List<Map<String, Object>> enviosReducidos = new ArrayList<>();
         Estado enAlmacen = estadoRepository.findByNombre("En almacén").orElse(null);
 
         if (enAlmacen == null)
@@ -54,25 +55,31 @@ public class EnvioService {
                 boolean soloInicio = rangoFechas.getFechaInicio() != null && rangoFechas.getFechaFin() == null
                         && historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio());
                 if(soloInicio) {
-                    enviosReducidos.add(modelMapper.map(envio, EnvioReducidoData.class));
+                    enviosReducidos.add(envioReducidoConPrecio(envio, envio.getDireccionDestino()));
                     break;
                 }
 
                 boolean soloFin = rangoFechas.getFechaInicio() == null && rangoFechas.getFechaFin() != null
                         && historico.getFecha().toLocalDate().isBefore(rangoFechas.getFechaFin());
                 if(soloFin) {
-                    enviosReducidos.add(modelMapper.map(envio, EnvioReducidoData.class));
+                    enviosReducidos.add(envioReducidoConPrecio(envio, envio.getDireccionDestino()));
                     break;
                 }
 
                 boolean enRango = historico.getFecha().toLocalDate().isAfter(rangoFechas.getFechaInicio()) && historico.getFecha().toLocalDate().isBefore(rangoFechas.getFechaFin());
                 if(enRango) {
-                    enviosReducidos.add(modelMapper.map(envio, EnvioReducidoData.class));
+                    enviosReducidos.add(envioReducidoConPrecio(envio, envio.getDireccionDestino()));
                     break;
                 }
             }
         }
         return enviosReducidos;
+    }
+
+    private Map<String, Object> envioReducidoConPrecio(Envio envio, Direccion direccionDestino){
+        Map<String, Object> response = convertUsingReflection(modelMapper.map(envio, EnvioReducidoData.class));
+        response.put("precio", calcularCoste(direccionDestino.getCodigoPostal(), envio.getBultos()));
+        return response;
     }
 
     private boolean envioFinalizado(Estado cancelado, Estado entregado, Envio envio){
@@ -215,7 +222,6 @@ public class EnvioService {
         return envioDTO;
     }
 
-    @Transactional(readOnly = true)
     public Tarifa calcularTarifaDistancia(String codigoPostal){
         logger.debug("Cálculo de tarifa de distancia");
 
@@ -231,7 +237,6 @@ public class EnvioService {
         return tarifa;
     }
 
-    @Transactional(readOnly = true)
     public Float calcularCoste(String codigoPostal, int bultos){
         logger.debug("Cálculo de coste de envío");
         Tarifa tarifaDistancia = calcularTarifaDistancia(codigoPostal);
@@ -240,7 +245,7 @@ public class EnvioService {
 
         float coste = 0;
         coste += tarifaDistancia != null ? tarifaDistancia.getCoste() : 0;
-        coste += tarifaBultos != null ? tarifaBultos.getCoste() : 0;
+        coste += tarifaBultos != null ? tarifaBultos.getCoste() * bultos : 0;
 
         return coste;
     }
@@ -313,10 +318,24 @@ public class EnvioService {
         return envioResult;
     }
 
-    @Transactional
-    public List<EnvioReducidoData> enviosReducidosTienda(Long idTienda, FiltroEnvios filtroEnvios) {
-        List<EnvioReducidoData> envios;
+    private Map<String, Object> convertUsingReflection(Object object){
+        Map<String, Object> map = new HashMap<>();
+        Field[] fields = object.getClass().getDeclaredFields();
 
+        for (Field field: fields) {
+            field.setAccessible(true);
+            Object value = null;
+            try {
+                value = field.get(object);
+            } catch (Exception ignored) {}
+            map.put(field.getName(), value);
+        }
+
+        return map;
+    }
+
+    @Transactional
+    public List<Map<String, Object>> enviosReducidosTienda(Long idTienda, FiltroEnvios filtroEnvios) {
         Usuario tienda = usuarioRepository.findById(idTienda).orElse(null);
         if(tienda == null)
             throw new UsuarioServiceException("Tienda con ID " + idTienda + " no existe");
@@ -326,11 +345,10 @@ public class EnvioService {
         boolean todosEnvios = filtroEnvios == null || filtroEnvios.vacio();
 
         if(todosEnvios){
-            return envioEntities.stream().map(envio -> modelMapper.map(envio, EnvioReducidoData.class)).collect(Collectors.toList());
+            return envioEntities.stream().map(envio -> envioReducidoConPrecio(envio, envio.getDireccionDestino())).collect(Collectors.toList());
         }
 
-        envios = filtrarEnviosFechaReducido(envioEntities, filtroEnvios);
-        return envios;
+        return filtrarEnviosFechaReducido(envioEntities, filtroEnvios);
     }
 
     @Transactional
