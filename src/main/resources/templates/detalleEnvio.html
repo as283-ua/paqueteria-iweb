@@ -45,11 +45,11 @@
     <div class="row mt-3">
         <div class="col">
             <h3>Datos generales</h3>
-            <ul>
+            <ul style="list-style: none; padding: 0;">
                 <li><strong>Id:</strong> <span th:text="${envio.id}"></span></li>
                 <li><strong>Código:</strong> <span th:text="${envio.codigo}"></span></li>
                 <li><strong>Peso:</strong> <span th:text="${envio.peso}"></span></li>
-                <li><strong>Precio:</strong> <span th:text="${envio.precio}"></span></li>
+                <li th:if="${'webmaster'.equals(usuario.getRol().getNombre()) || 'tienda'.equals(usuario.getRol().getNombre())}"><strong>Precio:</strong> <span th:text="${envio.precio}"></span></li>
                 <li><strong>Tarifas:</strong> <span th:text="${tarifas}"></span></li>
                 <li><strong>Observaciones:</strong> <span th:text="${envio.observaciones}"></span></li>
             </ul>
@@ -58,7 +58,7 @@
     <div class="row mt-3">
         <div class="col">
             <h3>Dirección de origen</h3>
-            <ul>
+            <ul style="list-style: none; padding: 0;">
                 <li><strong>Código postal:</strong> <span th:text="${direccionOrigen.codigoPostal}"></span></li>
                 <li><strong>Provincia:</strong> <span th:text="${direccionOrigen.provincia}"></span></li>
                 <li><strong>Localidad:</strong> <span th:text="${direccionOrigen.localidad}"></span></li>
@@ -73,7 +73,7 @@
     <div class="row mt-3">
         <div class="col">
             <h3>Dirección de destino</h3>
-            <ul>
+            <ul style="list-style: none; padding: 0;">
                 <li><strong>Código postal:</strong> <span th:text="${direccionDestino.codigoPostal}"></span></li>
                 <li><strong>Provincia:</strong> <span th:text="${direccionDestino.provincia}"></span></li>
                 <li><strong>Localidad:</strong> <span th:text="${direccionDestino.localidad}"></span></li>
@@ -99,7 +99,7 @@
                 <tbody>
                 <tr th:each="estado : ${historico}">
                     <td th:text="${estado.getEstado()}"></td>
-                    <td th:text="${estado.getFecha()}"></td>
+                    <td th:text="${#strings.substring(estado.getFecha(), 8, 10) + '-' + #strings.substring(estado.getFecha(), 5, 7) + '-' + #strings.substring(estado.getFecha(), 0, 4) + ' ' + #strings.substring(estado.getFecha(), 11, 16)}"></td>
                     <td th:text="${estado.getObservaciones()}"></td>
                 </tr>
                 </tbody>

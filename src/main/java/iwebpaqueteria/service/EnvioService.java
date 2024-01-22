@@ -201,6 +201,15 @@ public class EnvioService {
         Envio envio = new Envio(peso, bultos, precio, observaciones, direccionOrigen, direccionDestino);
         envio = envioRepository.save(envio);
 
+        Tarifa tarifaBultos = tarifaRepository.findByNombre("Bultos")
+                .orElseThrow(() -> new EnvioServiceException("No existe la tarifa bultos"));
+        envio.getTarifas().add(tarifaBultos);
+
+        Tarifa tarifaEnvio = calcularTarifaDistancia(direccionDestino.getCodigoPostal());
+        envio.getTarifas().add(tarifaEnvio);
+
+        envio = envioRepository.save(envio);
+
         Estado estado = estadoRepository.findByNombre("En almacén").
                 orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado En almacén"));
 
