@@ -1,9 +1,6 @@
 package iwebpaqueteria.service;
 
-import iwebpaqueteria.dto.EnvioData;
-import iwebpaqueteria.dto.EnvioReducidoData;
-import iwebpaqueteria.dto.FiltroEnvios;
-import iwebpaqueteria.dto.TarifaData;
+import iwebpaqueteria.dto.*;
 import iwebpaqueteria.model.*;
 import iwebpaqueteria.repository.*;
 import iwebpaqueteria.service.exception.EnvioServiceException;
@@ -211,6 +208,15 @@ public class EnvioService {
         Envio envio = new Envio(peso, bultos, precio, observaciones, direccionOrigen, direccionDestino);
         envio = envioRepository.save(envio);
 
+        Tarifa tarifaBultos = tarifaRepository.findByNombre("Bultos")
+                .orElseThrow(() -> new EnvioServiceException("No existe la tarifa bultos"));
+        envio.getTarifas().add(tarifaBultos);
+
+        Tarifa tarifaEnvio = calcularTarifaDistancia(direccionDestino.getCodigoPostal());
+        envio.getTarifas().add(tarifaEnvio);
+
+        envio = envioRepository.save(envio);
+
         Estado estado = estadoRepository.findByNombre("En almacén").
                 orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado En almacén"));
 
@@ -237,6 +243,19 @@ public class EnvioService {
         return tarifa;
     }
 
+    @Transactional
+    public List<TarifaReducidaData> consultaTarifas(String codigoPostal, int bultos){
+        TarifaReducidaData tarifaDistancia = modelMapper.map(calcularTarifaDistancia(codigoPostal), TarifaReducidaData.class);
+        TarifaReducidaData tarifaBultos = modelMapper.map(tarifaRepository.findByNombre("Bultos")
+                .orElseThrow(() -> new EnvioServiceException("No existe la tarifa bultos")), TarifaReducidaData.class);
+
+        tarifaDistancia.setCantidad(bultos);
+        tarifaBultos.setCantidad(bultos);
+
+        return Arrays.asList(tarifaDistancia, tarifaBultos);
+    }
+
+    @Transactional(readOnly = true)
     public Float calcularCoste(String codigoPostal, int bultos){
         logger.debug("Cálculo de coste de envío");
         Tarifa tarifaDistancia = calcularTarifaDistancia(codigoPostal);
@@ -287,6 +306,31 @@ public class EnvioService {
 
         envio.setRepartidor(repartidor);
         envioRepository.save(envio);
+    }
+
+    @Transactional
+    public void desasignarRepartidor(Long idEnvio){
+        Envio envio = envioRepository.findById(idEnvio).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + idEnvio);
+
+        envio.setRepartidor(null);
+        envioRepository.save(envio);
+    }
+
+    @Transactional
+    public void cancelarEnvio(Long idEnvio){
+        Envio envio = envioRepository.findById(idEnvio).orElse(null);
+        if(!comprobarCancelable(envio)){
+            throw new EnvioServiceException("El envío ya se ha enviado. No se puede cancelar");
+        }
+
+        Estado estado = estadoRepository.findByNombre("Cancelado").
+                orElseThrow(() -> new EnvioServiceException("Error interno: no existe estado Cancelado"));
+
+        Historico envioCanceladoH = new Historico(envio, estado);
+
+        envioCanceladoH = historicoRepository.save(envioCanceladoH);
     }
 
     @Transactional
@@ -474,6 +518,15 @@ public class EnvioService {
             throw new IllegalArgumentException("El envío ya está en el estado inicial");
 
         historicoRepository.delete(estadoActual);
+    }
+
+    @Transactional(readOnly = true)
+    public List<HistoricoData> historicoDeEnvio(Long idEnvio){
+        Envio envio = envioRepository.findById(idEnvio).orElse(null);
+        if(envio == null)
+            throw new IllegalArgumentException("No existe envío con id " + idEnvio);
+
+        return envio.getHistoricos().stream().map(historico -> modelMapper.map(historico, HistoricoData.class)).collect(Collectors.toList());
     }
 
     private boolean comprobarCancelable(Envio envio) {

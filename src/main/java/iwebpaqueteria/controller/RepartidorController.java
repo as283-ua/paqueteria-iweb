@@ -140,13 +140,18 @@ public class RepartidorController {
         if (!repartidor.getTelefono().matches("[0-9+]+")){
             model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
             model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-            UsuarioData rep = new UsuarioData();
-            rep.setId(idUsu);
-            model.addAttribute("repartidor", rep);
+            model.addAttribute("repartidor", repartidor);
             return "formModificarRepartidor";
         }
 
-        usuarioService.registrarRepartidor(repartidor);
+        try{
+            usuarioService.modificarRepartidor(repartidor, idUsu);
+        } catch (Exception e){
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+            model.addAttribute("repartidor", repartidor);
+            return "formModificarRepartidor";
+        }
 
         return "redirect:/repartidores";
     }

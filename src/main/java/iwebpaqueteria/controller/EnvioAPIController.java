@@ -105,4 +105,17 @@ public class EnvioAPIController {
 
         return envioService.enviosReducidosTienda(tienda.getId(), rangoFechas);
     }
+
+    @GetMapping(value = "/envios/tarifas", produces = "application/json")
+    public Map<String, Object> consultarPrecio( @RequestParam(value = "peso") Integer peso,
+                                                @RequestParam(value = "cp") String cp,
+                                                @RequestParam(value = "bultos") Integer bultos,
+                                                @RequestHeader(value = "Authorization", required = false) String apiKey) {
+        Map<String, Object> response = new HashMap<>();
+        UsuarioData tienda = validarApikey(apiKey);
+
+        response.put("precio", envioService.calcularCoste(cp, bultos));
+        response.put("tarifas", envioService.consultaTarifas(cp, bultos));
+        return response;
+    }
 }

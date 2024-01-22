@@ -32,17 +32,24 @@
     </div>
 
     <div th:if="${repartidor != null}" class="row mt-3 col">
-        <h2 th:text="'Repartidor asignado: ' + ${repartidor}"></h2>
+        <ul style="list-style: none; padding: 0;">
+            <li th:if="${'webmaster'.equals(usuario.getRol().getNombre()) || 'tienda'.equals(usuario.getRol().getNombre())}">
+                <h2 th:text="'Repartidor asignado: ' + ${repartidor}"></h2>
+            </li>
+            <li th:if="${'webmaster'.equals(usuario.getRol().getNombre())}">
+                <a class="btn btn-danger" th:href="@{'/envios/' + ${envio.id} + '/desasignar'}">Desasignar repartidor</a>
+            </li>
+        </ul>
     </div>
 
     <div class="row mt-3">
         <div class="col">
             <h3>Datos generales</h3>
-            <ul>
+            <ul style="list-style: none; padding: 0;">
                 <li><strong>Id:</strong> <span th:text="${envio.id}"></span></li>
                 <li><strong>Código:</strong> <span th:text="${envio.codigo}"></span></li>
                 <li><strong>Peso:</strong> <span th:text="${envio.peso}"></span></li>
-                <li><strong>Precio:</strong> <span th:text="${envio.precio}"></span></li>
+                <li th:if="${'webmaster'.equals(usuario.getRol().getNombre()) || 'tienda'.equals(usuario.getRol().getNombre())}"><strong>Precio:</strong> <span th:text="${envio.precio}"></span></li>
                 <li><strong>Tarifas:</strong> <span th:text="${tarifas}"></span></li>
                 <li><strong>Observaciones:</strong> <span th:text="${envio.observaciones}"></span></li>
             </ul>
@@ -51,7 +58,7 @@
     <div class="row mt-3">
         <div class="col">
             <h3>Dirección de origen</h3>
-            <ul>
+            <ul style="list-style: none; padding: 0;">
                 <li><strong>Código postal:</strong> <span th:text="${direccionOrigen.codigoPostal}"></span></li>
                 <li><strong>Provincia:</strong> <span th:text="${direccionOrigen.provincia}"></span></li>
                 <li><strong>Localidad:</strong> <span th:text="${direccionOrigen.localidad}"></span></li>
@@ -66,7 +73,7 @@
     <div class="row mt-3">
         <div class="col">
             <h3>Dirección de destino</h3>
-            <ul>
+            <ul style="list-style: none; padding: 0;">
                 <li><strong>Código postal:</strong> <span th:text="${direccionDestino.codigoPostal}"></span></li>
                 <li><strong>Provincia:</strong> <span th:text="${direccionDestino.provincia}"></span></li>
                 <li><strong>Localidad:</strong> <span th:text="${direccionDestino.localidad}"></span></li>
@@ -81,12 +88,27 @@
     <div class="row mt-3">
         <div class="col">
             <h3>Historico estados</h3>
-            <div>Estado actual:</div>
-            <div th:text="${estadoActual.getEstado().getId()}"></div>
-            <div th:text="${estadoActual.getEstado().getNombre()}"></div>
-            <div th:text="${estadoActual.getFecha()}"></div>
-            <div th:text="${estadoActual.getObservaciones()}"></div>
-            <!-- Sustituir estos 3 div por la tabla con el historico de estados -->
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Observaciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="estado : ${historico}">
+                    <td th:text="${estado.getEstado()}"></td>
+                    <td th:text="${#strings.substring(estado.getFecha(), 8, 10) + '-' + #strings.substring(estado.getFecha(), 5, 7) + '-' + #strings.substring(estado.getFecha(), 0, 4) + ' ' + #strings.substring(estado.getFecha(), 11, 16)}"></td>
+                    <td th:text="${estado.getObservaciones()}"></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div th:if="${'tienda'.equals(usuario.getRol().getNombre()) || 'webmaster'.equals(usuario.getRol().getNombre())}">
+                <a th:if="${estadoActual.getEstado().getId() == 1}" class="btn btn-danger" th:href="@{'/envios/' + ${envio.id} + '/cancelar'}">Cancelar envío</a>
+            </div>
+
 
             <div th:if="${'repartidor'.equals(usuario.getRol().getNombre())}">
                 <div th:if="${estadoActual.getEstado().getId() == 1 || estadoActual.getEstado().getId() == 2 || estadoActual.getEstado().getId() == 3 || estadoActual.getEstado().getId() == 4}">
@@ -105,7 +127,7 @@
                         </div>
                     </form>
                 </div>
-                <button th:if="${estadoActual.getEstado().getId() != 1}" class="btn btn-danger" style="height: 38px;" th:onClick="'callPut(\'/envios/' + ${envio.id} + '/deshacer\')'">Deshacer ultimo cambio</button>
+                <button th:if="${estadoActual.getEstado().getId() != 1 && estadoActual.getEstado().getId() != 7}" class="btn btn-danger" style="height: 38px;" th:onClick="'callPut(\'/envios/' + ${envio.id} + '/deshacer\')'">Deshacer ultimo cambio</button>
             </div>
         </div>
     </div>
@@ -158,3 +180,9 @@
 </body>
 
 </html>
+
+<style>
+    body {
+        overflow-x: hidden;
+    }
+</style>
