@@ -60,6 +60,24 @@ public class EnvioController {
         }
     }
 
+    private void compruebaUsuarioLogeadoTienda() {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado==null)
+            throw new UsuarioNoLogeadoException();
+        if(!"tienda".equals(usuarioService.findById(idUsuarioLogeado).getRol().getNombre())){
+            throw new UsuarioSinPermisosException();
+        }
+    }
+
+    private void compruebaUsuarioLogeadoTiendaOWebMaster() {
+        Long idUsuarioLogeado = managerUserSession.usuarioLogeado();
+        if (idUsuarioLogeado==null)
+            throw new UsuarioNoLogeadoException();
+        if(!"tienda".equals(usuarioService.findById(idUsuarioLogeado).getRol().getNombre()) && !"webmaster".equals(usuarioService.findById(idUsuarioLogeado).getRol().getNombre())){
+            throw new UsuarioSinPermisosException();
+        }
+    }
+
     @GetMapping("/")
     public String buscarEnvio(Model model) {
         Long idYo = managerUserSession.usuarioLogeado();
@@ -156,6 +174,7 @@ public class EnvioController {
         model.addAttribute("direccionDestino", direccionService.findById(envio.getDireccionDestinoId()));
         model.addAttribute("tarifas", envioService.tarifasDeEnvio(idEnvio));
         model.addAttribute("estadoActual", estadoActual);
+        model.addAttribute("historico", envioService.historicoDeEnvio(idEnvio));
 
         return "detalleEnvio";
     }
@@ -176,6 +195,16 @@ public class EnvioController {
                 throw new EnvioNotFoundException();
         }
 
+
+        return "redirect:/envios/" + idEnvio;
+    }
+
+    @GetMapping("/envios/{id}/desasignar")
+    public String desasignarEnvio(Model model, @PathVariable(value="id") Long idEnvio) {
+
+        comprobarUsuarioLogeadoWebMaster();
+
+        envioService.desasignarRepartidor(idEnvio);
 
         return "redirect:/envios/" + idEnvio;
     }
@@ -234,6 +263,16 @@ public class EnvioController {
                 .limit(10)
                 .map(s -> "<div class=\"sugerencia-item\">" + s + "</div>")
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/envios/{id}/cancelar")
+    public String cancelarEnvio(Model model, @PathVariable(value="id") Long idEnvio) {
+
+        compruebaUsuarioLogeadoTiendaOWebMaster();
+
+        envioService.cancelarEnvio(idEnvio);
+
+        return "redirect:/envios/" + idEnvio;
     }
 
 }
