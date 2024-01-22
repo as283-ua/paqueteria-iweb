@@ -237,6 +237,18 @@ public class EnvioService {
         return tarifa;
     }
 
+    @Transactional
+    public List<TarifaReducidaData> consultaTarifas(String codigoPostal, int bultos){
+        TarifaReducidaData tarifaDistancia = modelMapper.map(calcularTarifaDistancia(codigoPostal), TarifaReducidaData.class);
+        TarifaReducidaData tarifaBultos = modelMapper.map(tarifaRepository.findByNombre("Bultos")
+                .orElseThrow(() -> new EnvioServiceException("No existe la tarifa bultos")), TarifaReducidaData.class);
+
+        tarifaDistancia.setCantidad(bultos);
+        tarifaBultos.setCantidad(bultos);
+
+        return Arrays.asList(tarifaDistancia, tarifaBultos);
+    }
+
     @Transactional(readOnly = true)
     public Float calcularCoste(String codigoPostal, int bultos){
         logger.debug("Cálculo de coste de envío");
