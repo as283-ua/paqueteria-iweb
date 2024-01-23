@@ -28,4 +28,4 @@ POSTGRES_DB=paqueteria postgres:13`
 
 `mvn spring-boot:run -Dspring-boot.run.profiles=postgres`
 
-Hace falta dar de alta a las tiendas con el usuario "admin", contraseña "admin123".
+Hace falta dar de alta a las tiendas con el usuario "admin@ua", contraseña "admin123".
