@@ -21,6 +21,12 @@ public class TiendaController {
     @GetMapping("/tiendas/{userId}/APIKEY")
     public String mostrarApiKey(@PathVariable(value = "userId") Long idTienda, Model model, HttpSession session) {
         comprobarUsuarioLogeado();
+
+        Long idYo = managerUserSession.usuarioLogeado();
+        if (idYo!=null && idYo.equals(idTienda)) {
+            usuarioService.cambiarApiKey(idTienda);
+        }
+
         model.addAttribute("tienda", usuarioService.findById(idTienda));
         return "APIKEY";
     }
@@ -28,10 +34,13 @@ public class TiendaController {
     @PostMapping("/tiendas/{userId}/APIKEY")
     public String cambiarApiKey(@PathVariable(value = "userId") Long idTienda, Model model, HttpSession session){
         comprobarUsuarioLogeado();
+
         Long idYo = managerUserSession.usuarioLogeado();
         if (idYo!=null && idYo.equals(idTienda)) {
             usuarioService.cambiarApiKey(idTienda);
         }
+
+        model.addAttribute("tienda", usuarioService.findById(idTienda));
         return "APIKEY";
     }
 
