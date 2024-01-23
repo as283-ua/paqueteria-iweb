@@ -1,6 +1,7 @@
 package iwebpaqueteria.model;
 
 import org.hibernate.cfg.NotYetImplementedException;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -111,9 +112,10 @@ public class Usuario {
         return rol;
     }
 
+    @Transactional
     public void setRol(Rol rol) {
         this.rol = rol;
-        rol.getUsuarios().add(this);
+        //rol.getUsuarios().add(this);
     }
 
     public Set<Envio> getEnvios() {

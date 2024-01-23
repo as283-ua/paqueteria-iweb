@@ -25,24 +25,27 @@ public class InitDbUtil {
     @Autowired
     private EstadoRepository estadoRepository;
 
-    private Rol crearRolIfNotExists(String nombre){
+    @Transactional
+    public Rol crearRolIfNotExists(String nombre){
         try{
             Rol rol = new Rol();
             rol.setNombre(nombre);
             return rolRepository.save(rol);
         } catch(Exception ignored){}
-        return null;
+        return rolRepository.findByNombre(nombre).orElse(null);
     }
 
-    private Tarifa crearTarifaIfNotExists(String nombre, int coste){
+    @Transactional
+    public Tarifa crearTarifaIfNotExists(String nombre, int coste){
         try{
             Tarifa tarifa = new Tarifa(nombre, coste);
             return tarifaRepository.save(tarifa);
         } catch(Exception ignored){}
-        return null;
+        return tarifaRepository.findByNombre(nombre).orElse(null);
     }
 
-    private Estado crearEstadoIfNotExists(String nombre){
+    @Transactional
+    public Estado crearEstadoIfNotExists(String nombre){
         try{
             Estado estado = new Estado(nombre);
             return estadoRepository.save(estado);
@@ -60,9 +63,9 @@ public class InitDbUtil {
 
     public List<Tarifa> initTarifas(){
         List<Tarifa> tarifas = new ArrayList<>();
-        tarifas.add(crearTarifaIfNotExists("Corta distancia", 1));
-        tarifas.add(crearTarifaIfNotExists("Larga distancia", 2));
-        tarifas.add(crearTarifaIfNotExists("Bultos", 1));
+        tarifas.add(crearTarifaIfNotExists("Corta distancia", 5));
+        tarifas.add(crearTarifaIfNotExists("Larga distancia", 10));
+        tarifas.add(crearTarifaIfNotExists("Bultos", 3));
         return tarifas;
     }
 
@@ -78,7 +81,6 @@ public class InitDbUtil {
         return estados;
     }
 
-    @Transactional
     public Map<String, List<?>> initDatabase() {
         Map<String, List<?>> result = new HashMap<>();
         result.put("roles", initRoles());

@@ -34,7 +34,9 @@ public class InitDbProdService {
         usuario.setContrasenya("admin123");
         usuario.setTelefono("123456789");
         usuario.setRol(webmaster);
-        usuarioRepository.save(usuario);
+        try{
+            usuarioRepository.save(usuario);
+        } catch (Exception ignored){}
     }
 
 }

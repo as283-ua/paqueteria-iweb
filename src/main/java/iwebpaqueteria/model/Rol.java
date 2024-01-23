@@ -16,6 +16,7 @@ public class Rol {
     private Long id;
 
     @NotNull
+    @Column(unique=true)
     private String nombre;
 
     @OneToMany(mappedBy = "rol")
