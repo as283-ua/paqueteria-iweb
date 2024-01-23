@@ -2,6 +2,7 @@ package iwebpaqueteria.controller;
 import iwebpaqueteria.authentication.ManagerUserSession;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
 import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
+import iwebpaqueteria.dto.UsuarioData;
 import iwebpaqueteria.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,24 +25,27 @@ public class TiendaController {
         comprobarUsuarioLogeado();
 
         Long idYo = managerUserSession.usuarioLogeado();
-        if (idYo!=null && !idYo.equals(idTienda)) {
+        if (!idYo.equals(idTienda)) {
             throw new UsuarioSinPermisosException();
         }
-        model.addAttribute("usuario", usuarioService.findById(idYo));
-        model.addAttribute("tienda", usuarioService.findById(idTienda));
+
+        UsuarioData tienda = usuarioService.findById(idTienda);
+        model.addAttribute("usuario", tienda);
+        model.addAttribute("tienda", tienda);
+
         return "APIKEY";
     }
 
     @PostMapping("/tiendas/{userId}/APIKEY")
-    public String cambiarApiKey(@PathVariable(value = "userId") Long idTienda, Model model, HttpSession session){
+    public String cambiarApiKey(@PathVariable(value = "userId") Long idTienda, HttpSession session){
         comprobarUsuarioLogeado();
 
         Long idYo = managerUserSession.usuarioLogeado();
-        if (idYo!=null && idYo.equals(idTienda)) {
-            usuarioService.cambiarApiKey(idTienda);
+        if (!idYo.equals(idTienda)) {
+            throw new UsuarioSinPermisosException();
         }
 
-        model.addAttribute("tienda", usuarioService.findById(idTienda));
+        usuarioService.cambiarApiKey(idTienda);
 
         return "redirect:/tiendas/"+ idYo +"/APIKEY";
     }
