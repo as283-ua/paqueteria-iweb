@@ -193,6 +193,16 @@ public class EnvioService {
         return modelMapper.map(envio, EnvioData.class);
     }
 
+    @Transactional(readOnly = true)
+    public EnvioData recuperarEnvio(String codigo) {
+        logger.debug("Buscando envío con código " + codigo);
+        Envio envio =  envioRepository.findByCodigo(codigo).orElse(null);
+        if(envio == null)
+            return null;
+
+        return modelMapper.map(envio, EnvioData.class);
+    }
+
     @Transactional
     public EnvioData crearEnvio(float peso, int bultos, String observaciones, Long tiendaId, Long direccionDestinoId) {
         logger.debug("Creando envío");

@@ -79,12 +79,38 @@ public class EnvioController {
     }
 
     @GetMapping("/")
-    public String buscarEnvio(Model model) {
+    public String buscarEnvio(@ModelAttribute EnvioData envioData, Model model) {
         Long idYo = managerUserSession.usuarioLogeado();
         if (idYo!=null)
             model.addAttribute("usuario", usuarioService.findById(idYo));
 
         return "buscarEnvio";
+    }
+    @GetMapping("/buscar/{codigo}")
+    public String envioBuscado(@PathVariable(value="codigo") String codigoEnvio, @ModelAttribute EnvioData envioData, Model model) {
+        Long idYo = managerUserSession.usuarioLogeado();
+        if (idYo!=null)
+            model.addAttribute("usuario", usuarioService.findById(idYo));
+
+        EnvioData envio = envioService.recuperarEnvio(codigoEnvio);
+        if(envio!=null){
+            model.addAttribute("envio", envio);
+            model.addAttribute("direccionOrigen", direccionService.findById(envio.getDireccionOrigenId()));
+            model.addAttribute("direccionDestino", direccionService.findById(envio.getDireccionDestinoId()));
+            model.addAttribute("tarifas", envioService.tarifasDeEnvio(envio.getId()));
+            model.addAttribute("historico", envioService.historicoDeEnvio(envio.getId()));
+        }
+        else{
+            model.addAttribute("error", "No existe un envío con ese código");
+        }
+
+        return "buscarEnvio";
+    }
+
+    @PostMapping("/buscar")
+    public String buscarEnvio(@RequestParam String codigo, @ModelAttribute EnvioData envioData, Model model) {
+
+        return "redirect:/buscar/" + codigo;
     }
 
     public Map<Long, DireccionData> direccionesDeEnvios(List<EnvioData> envios){
