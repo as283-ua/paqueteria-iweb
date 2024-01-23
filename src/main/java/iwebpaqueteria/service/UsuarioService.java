@@ -37,25 +37,10 @@ public class UsuarioService {
     @Autowired
     private ModelMapper modelMapper;
 
-    private Character randomAlphaNumeric(){
-        int num = new Random().nextInt() % 62;
-        num += 48;
-
-        if (num < 58) return (char)num;
-
-        num += 7;
-        if (num < 91) return (char)num;
-
-        num += 6;
-
-        return (char)num;
-    }
-
     private String generarApiKey(){
-        byte[] array = new byte[32];
-        new SecureRandom().nextBytes(array);
-        return Base64.getEncoder().encodeToString(array).replaceAll("[^a-zA-Z0-9]", randomAlphaNumeric().toString());
+        return UUID.randomUUID().toString().replace("-", "");
     }
+
     @Transactional
     public void cambiarApiKey(Long userId){
         Optional<Usuario> u= usuarioRepository.findById(userId);
