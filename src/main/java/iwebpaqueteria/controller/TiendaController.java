@@ -27,7 +27,7 @@ public class TiendaController {
         if (idYo!=null && !idYo.equals(idTienda)) {
             throw new UsuarioSinPermisosException();
         }
-
+        model.addAttribute("usuario", usuarioService.findById(idYo));
         model.addAttribute("tienda", usuarioService.findById(idTienda));
         return "APIKEY";
     }
@@ -42,7 +42,8 @@ public class TiendaController {
         }
 
         model.addAttribute("tienda", usuarioService.findById(idTienda));
-        return "APIKEY";
+
+        return "redirect:/tiendas/"+ idYo +"/APIKEY";
     }
 
     private void comprobarUsuarioLogeado() {
