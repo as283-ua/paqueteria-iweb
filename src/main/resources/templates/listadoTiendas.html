@@ -68,32 +68,13 @@
     }
 </style>
 
-<script>
-    const fechaInicioInput = document.getElementById('inicio');
-    const fechaFinInput = document.getElementById('fin');
-    const hoyInput = document.getElementById('hoy');
-    const porEntregarInput = document.getElementById('no-entregado');
-
-    function esHoy(){
-        const fechaInicio = fechaInicioInput.value;
-        const fechaFin = fechaFinInput.value;
-
-        return fechaInicio === fechaFin && fechaInicio === new Date().toISOString().split('T')[0];
+<script type="text/javascript">
+    function deleteTienda(url){
+        console.log(url);
+        fetch(url, {
+            method: 'DELETE'
+        }).then((res) => location.reload());
     }
-    // document.getElementById('hoy').addEventListener('change', function () {
-    //     if (this.checked && !esHoy()) {
-    //         hoyInput.value = 'true';
-    //         document.getElementById('formFiltro').submit();
-    //     }
-    // });
-    document.getElementById('borrarFiltro').addEventListener('click', function () {
-        hoyInput.value = 'false';
-        hoyInput.checked = false;
-        porEntregarInput.value = 'false';
-        porEntregarInput.checked = false;
-        fechaFinInput.value = '';
-        fechaInicioInput.value = '';
-    });
 </script>
 </body>
 </html>
