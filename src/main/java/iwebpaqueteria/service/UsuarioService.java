@@ -2,10 +2,7 @@ package iwebpaqueteria.service;
 
 import iwebpaqueteria.dto.*;
 import iwebpaqueteria.model.*;
-import iwebpaqueteria.repository.EstadoRepository;
-import iwebpaqueteria.repository.HistoricoRepository;
-import iwebpaqueteria.repository.RolRepository;
-import iwebpaqueteria.repository.UsuarioRepository;
+import iwebpaqueteria.repository.*;
 import iwebpaqueteria.service.exception.UsuarioServiceException;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -32,7 +29,7 @@ public class UsuarioService {
     private RolRepository rolRepository;
 
     @Autowired
-    private EstadoRepository estadoRepository;
+    private DireccionRepository direccionRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -127,6 +124,7 @@ public class UsuarioService {
             usuarioNuevo.setAPIKey(generarApiKey());
 
             Direccion dir = modelMapper.map(direccion, Direccion.class);
+            direccionRepository.save(dir);
 
             usuarioNuevo.setDireccion(dir);
 
