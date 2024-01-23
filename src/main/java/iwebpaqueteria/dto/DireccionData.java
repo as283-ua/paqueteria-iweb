@@ -38,6 +38,17 @@ public class DireccionData {
 
         public DireccionData() {}
 
+        public DireccionData(Direccion direccion){
+            this.codigoPostal = direccion.getCodigoPostal();
+            this.localidad = direccion.getLocalidad();
+            this.provincia = direccion.getProvincia();
+            this.numero = direccion.getNumero();
+            this.planta = direccion.getPlanta();
+            this.calle = direccion.getCalle();
+            this.telefono = direccion.getTelefono();
+            this.nombre = direccion.getNombre();
+        }
+
         public DireccionData(String codigoPostal, String localidad, String provincia, int numero, int planta, String calle, String telefono, String nombre) {
             this.codigoPostal = codigoPostal;
             this.localidad = localidad;

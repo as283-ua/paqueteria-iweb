@@ -83,7 +83,7 @@ public class TiendaController {
 
         Set<UsuarioData> tiendas = rolService.listarUsuariosPorRol("tienda");
         model.addAttribute("tiendas", tiendas);
-
+        model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
 
         return "listadoTiendas";
     }
@@ -114,9 +114,48 @@ public class TiendaController {
         if (usuarioService.findById(idUsu) == null)
             return "redirect:/tiendas";
 
-        model.addAttribute("tienda",usuarioService.findById(idUsu));
+        UsuarioData tienda = usuarioService.findById(idUsu);
+        model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+        model.addAttribute("tienda", tienda);
         model.addAttribute("envios",envioService.enviosTienda(idUsu,null));
         model.addAttribute("direcciones", direccionesDeEnvios(envioService.enviosTienda(idUsu,null)));
         return "detalleTienda";
+    }
+
+    @GetMapping("/tiendas/nuevo")
+    public String nuevoTienda(Model model, HttpSession session) {
+
+        comprobarUsuarioLogeadoWebMaster();
+
+        model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+        model.addAttribute("tienda", new UsuarioData());
+
+        return "formNuevaTienda";
+    }
+
+    @PostMapping("/tiendas/nuevo")
+    public String altaTienda(@ModelAttribute UsuarioData tienda, Model model, HttpSession session) {
+
+        comprobarUsuarioLogeadoWebMaster();
+        //tienda.getDireccion().setTelefono(tienda.getTelefono());
+        //tienda.getDireccion().setNombre(tienda.getNombre());
+
+        if (!tienda.getTelefono().matches("[0-9+]+")){
+            model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
+            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+            model.addAttribute("tienda", tienda);
+
+            return "formNuevaTienda";
+        }
+        if(!tienda.getDireccion().getCodigoPostal().matches("[0-9](\\d{3})")){
+            model.addAttribute("error", "El código postal solo puede contener 5 dígitos");
+            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+            model.addAttribute("tienda", tienda);
+
+            return "formNuevaTienda";
+        }
+        usuarioService.registrarTienda(tienda,  new DireccionData(tienda.getDireccion()));
+
+        return "redirect:/tiendas";
     }
 }
