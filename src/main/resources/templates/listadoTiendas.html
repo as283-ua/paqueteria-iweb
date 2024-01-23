@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Tiendas')"></head>
+
+<div th:replace="NavMenu"></div>
+
+<body>
+<div class="container-fluid">
+
+    <div class="row mt-3">
+        <div class="col-12">
+            <h2>Tiendas</h2>
+        </div>
+
+
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Ubicación</th>
+                <th>Acción</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="tienda: ${tiendas}">
+                <td th:text="${tienda.id}"></td>
+                <td th:text="${tienda.nombre}"></td>
+                <td th:text="${tienda.direccion.calle}"></td>
+                <td>
+                    <a class="btn btn-primary" th:href="'/tiendas/' + ${tienda.id}">Detalles</a>
+                    <a class="btn btn-warning" th:href="'/tiendas/' + ${tienda.id} + '/modificar'">Modificar</a>
+                    <button class="btn btn-danger" th:onClick="'deleteTienda(\'/tiendas/' + ${tienda.id} + '\')'">Eliminar</button>
+                <!--
+                <td>
+                    <a class="btn btn-warning" th:href="'/envios/' + ${envio.id}">Gestionar/Ver detalles</a>
+                </td> -->
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<a class="btn btn-dark" href="tiendas/nuevo">Registrar tienda</a>
+
+<div th:replace="fragments::javascript"/>
+
+<style>
+    input[type="date"] {
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        border: 1px solid #ced4da;
+        padding: 0.375rem 0.75rem;
+        border-radius: 0.25rem;
+        outline: none;
+    }
+
+    /* Optional: Add some additional styling for better visual appeal */
+    input[type="date"]:hover {
+        border-color: #6c757d;
+    }
+
+    input[type="date"]:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+</style>
+
+<script>
+    const fechaInicioInput = document.getElementById('inicio');
+    const fechaFinInput = document.getElementById('fin');
+    const hoyInput = document.getElementById('hoy');
+    const porEntregarInput = document.getElementById('no-entregado');
+
+    function esHoy(){
+        const fechaInicio = fechaInicioInput.value;
+        const fechaFin = fechaFinInput.value;
+
+        return fechaInicio === fechaFin && fechaInicio === new Date().toISOString().split('T')[0];
+    }
+    // document.getElementById('hoy').addEventListener('change', function () {
+    //     if (this.checked && !esHoy()) {
+    //         hoyInput.value = 'true';
+    //         document.getElementById('formFiltro').submit();
+    //     }
+    // });
+    document.getElementById('borrarFiltro').addEventListener('click', function () {
+        hoyInput.value = 'false';
+        hoyInput.checked = false;
+        porEntregarInput.value = 'false';
+        porEntregarInput.checked = false;
+        fechaFinInput.value = '';
+        fechaInicioInput.value = '';
+    });
+</script>
+</body>
+</html>
