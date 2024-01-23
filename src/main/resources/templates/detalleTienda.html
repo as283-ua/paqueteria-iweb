@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Detalle tienda')"></head>
+
+<div th:replace="NavMenu"></div>
+
+<body>
+<div class="container-fluid">
+
+    <div class="row mt-3">
+        <div class="col">
+            <h2 th:text="${tienda.nombre}"></h2>
+        </div>
+    </div>
+
+    <br>
+
+    <table class="table table-striped">
+        <tr>
+            <th>Id</th>
+            <td th:text="${tienda.id}"></td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td th:text="${tienda.email}"></td>
+        </tr>
+        <tr>
+            <th>Nombre</th>
+            <td th:text="${tienda.nombre}"></td>
+        </tr>
+        <tr>
+            <th>Teléfono</th>
+            <td th:text="${tienda.telefono}"></td>
+        </tr>
+        <tr>
+            <th>API KEY</th>
+            <td th:text="${tienda.APIKey}"></td>
+        </tr>
+        <tr>
+            <th>Código Postal</th>
+            <td th:text="${tienda.direccion.codigoPostal}"></td>
+        </tr>
+        <tr>
+            <th>Localidad</th>
+            <td th:text="${tienda.direccion.localidad}"></td>
+        </tr>
+        <tr>
+            <th>Provincia</th>
+            <td th:text="${tienda.direccion.provincia}"></td>
+        </tr>
+        <tr>
+            <th>Calle</th>
+            <td th:text="${tienda.direccion.calle}"></td>
+        </tr>
+        <tr>
+            <th>Número</th>
+            <td th:text="${tienda.direccion.numero}"></td>
+        </tr>
+        <tr th:if="${tienda.direccion.planta}!=0">
+            <th>Planta</th>
+            <td th:text="${tienda.direccion.planta}"></td>
+        </tr>
+    </table>
+    <br>
+    <div class="row mt-3">
+        <div class="col">
+            <h2> Envios </h2>
+        </div>
+    </div>
+    <br>
+    <h3 class="text-danger" th:if="${envios.isEmpty()}"> Tienda sin envios </h3>
+    <table class="table table-striped" th:if="${!envios.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Peso</th>
+            <th>Observaciones</th>
+            <th>Destino: CP</th>
+            <th>Destino: Calle</th>
+            <th th:if="${tienda.rol.nombre == 'webmaster' || tienda.rol.nombre == 'tienda'}">Precio</th>
+            <th>Acción</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="envio: ${envios}">
+            <td th:text="${envio.id}"></td>
+            <td th:text="${envio.peso}"></td>
+            <td th:text="${envio.observaciones}"></td>
+            <td th:text="${direcciones.get(envio.getId()).codigoPostal}"></td>
+            <td th:text="${direcciones.get(envio.getId()).calle}"></td>
+            <td th:if="${tienda.rol.nombre == 'webmaster' || tienda.rol.nombre == 'tienda'}" th:text="${envio.precio}"></td>
+            <td>
+                <a class="btn btn-warning" th:href="'/envios/' + ${envio.id}">Gestionar/Ver detalles</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    
+<!--
+    <div class="row mt-3">
+        <div class="col">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Peso</th>
+                    <th>Observaciones</th>
+                    <th>Destino: CP</th>
+                    <th>Destino: Calle</th>
+                    <th th:if="${usuario.rol.nombre == 'webmaster' || usuario.rol.nombre == 'tienda'}">Precio</th>
+                    <th>Acción</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="envio: ${envios}">
+                    <td th:text="${envio.id}"></td>
+                    <td th:text="${envio.peso}"></td>
+                    <td th:text="${envio.observaciones}"></td>
+                    <td th:text="${direcciones.get(envio.id).codigoPostal}"></td>
+                    <td th:text="${direcciones.get(envio.id).calle}"></td>
+                    <td th:if="${usuario.rol.nombre == 'webmaster' || usuario.rol.nombre == 'tienda'}" th:text="${envio.precio}"></td>
+                    <td>
+                        <a class="btn btn-warning" th:href="'/envios/' + ${envio.id}">Ver detalles</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a class="btn btn-danger" href="/repartidores">Volver</a>
+
+</div>-->
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
