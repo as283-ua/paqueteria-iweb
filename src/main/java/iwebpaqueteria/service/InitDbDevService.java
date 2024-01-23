@@ -78,6 +78,8 @@ public class InitDbDevService {
         Direccion direccionOrigenTienda1 = new Direccion("0300", "San Vicente", "Alicante", 1, 0, "Calle Alberto", "234567891", "Tienda 1");
         Direccion direccionOrigenTienda2 = new Direccion("0300", "Alicante", "Alicante", 17, 0, "Calle Tienda 2", "123123112", "Tienda 2");
 
+        direccionRepository.save(direccionOrigenTienda1);
+        direccionRepository.save(direccionOrigenTienda2);
 
         Usuario tienda1 = new Usuario("tienda1@ua");
         tienda1.setNombre("Tienda 1");

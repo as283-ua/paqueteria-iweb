@@ -32,7 +32,7 @@ public class Usuario {
 
     private String APIKey;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "direccion_id", referencedColumnName = "id")
     private Direccion direccion;
 
@@ -137,5 +137,16 @@ public class Usuario {
     @Override
     public int hashCode() {
         return Objects.hash(email);
+    }
+
+    @PreRemove
+    private void preRemove(){
+        for (Envio envio : envios) {
+            envio.setRepartidor(null);
+        }
+
+        if(direccion != null){
+            direccion.setUsuario(null);
+        }
     }
 }
