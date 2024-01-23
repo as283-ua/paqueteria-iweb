@@ -26,6 +26,6 @@ POSTGRES_DB=paqueteria postgres:13`
 
 - Arrancar la aplicación:
 
-`mvn -D spring.profiles.active=postgres spring-boot:run`
+`mvn spring-boot:run -Dspring-boot.run.profiles=postgres`
 
 Hace falta dar de alta a las tiendas con el usuario "admin", contraseña "admin123".
