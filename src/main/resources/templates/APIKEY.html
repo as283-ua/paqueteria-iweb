@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='API KEY')"></head>
+
+<div th:replace="NavMenu"></div>
+
+<body>
+<div class="container-fluid">
+    <h1 id="KEY" th:text="'API KEY: '+${tienda.APIKey}"></h1>
+    <form method="post" th:action="@{/tiendas/{userId}/APIKEY(userId=${tienda.id})}" >
+        <button id="generarNuevoApiKey" type="submit" class="btn btn-outline-primary">Generar nuevo API KEY</button>
+    </form>
+</div>
+</body>
+</html>

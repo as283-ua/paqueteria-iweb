@@ -56,6 +56,19 @@ public class UsuarioService {
         new SecureRandom().nextBytes(array);
         return Base64.getEncoder().encodeToString(array).replaceAll("[^a-zA-Z0-9]", randomAlphaNumeric().toString());
     }
+    @Transactional
+    public void cambiarApiKey(Long userId){
+        Optional<Usuario> u= usuarioRepository.findById(userId);
+
+        if (!u.isPresent()) {
+            throw new UsuarioServiceException("Usuario no existe");
+        } else{
+            Usuario user = u.get();
+            String newApiKey = generarApiKey();
+            user.setAPIKey(newApiKey);
+            usuarioRepository.save(user);
+        }
+    }
 
     @Transactional(readOnly = true)
     public LoginStatus login(String eMail, String password) {
