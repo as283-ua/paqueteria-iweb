@@ -3,11 +3,7 @@ import iwebpaqueteria.authentication.ManagerUserSession;
 import iwebpaqueteria.controller.exception.UsuarioNoLogeadoException;
 import iwebpaqueteria.controller.exception.UsuarioSinPermisosException;
 import iwebpaqueteria.dto.UsuarioData;
-<<<<<<< HEAD
-=======
-import iwebpaqueteria.repository.RolRepository;
 import iwebpaqueteria.service.RolService;
->>>>>>> gonzalo
 import iwebpaqueteria.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
