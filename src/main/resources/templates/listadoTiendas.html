@@ -19,7 +19,6 @@
             <tr>
                 <th>Id</th>
                 <th>Nombre</th>
-                <th>Ubicación</th>
                 <th>Acción</th>
             </tr>
             </thead>
@@ -27,7 +26,6 @@
             <tr th:each="tienda: ${tiendas}">
                 <td th:text="${tienda.id}"></td>
                 <td th:text="${tienda.nombre}"></td>
-                <td th:text="${tienda.direccion.calle}"></td>
                 <td>
                     <a class="btn btn-primary" th:href="'/tiendas/' + ${tienda.id}">Detalles</a>
                     <a class="btn btn-warning" th:href="'/tiendas/' + ${tienda.id} + '/modificar'">Modificar</a>

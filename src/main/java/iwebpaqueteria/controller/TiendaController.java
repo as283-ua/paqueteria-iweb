@@ -178,14 +178,17 @@ public class TiendaController {
         }
 
         UsuarioData tienda = usuarioService.findById(idUsu);
-        model.addAttribute("tienda", tienda);
+        if(model.getAttribute("tienda") == null){
+            model.addAttribute("tienda", tienda);
+        }
+
         model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
 
         return "formModificarTienda";
     }
 
     @PostMapping("/tiendas/{id}/modificar")
-    public String modRepartidor(@PathVariable(value="id") Long idUsu, @ModelAttribute UsuarioData tienda, Model model, HttpSession session) {
+    public String modRepartidor(@PathVariable(value="id") Long idUsu, @ModelAttribute UsuarioData tienda, Model model, RedirectAttributes flash) {
 
         comprobarUsuarioLogeadoWebMaster();
 
@@ -194,25 +197,24 @@ public class TiendaController {
         }
 
         if (!tienda.getTelefono().matches("(\\+[0-9]{1,3})?[0-9]{9}") || !tienda.getDireccion().getTelefono().matches("(\\+[0-9]{1,3})?[0-9]{9}")){
-            model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
-            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-            model.addAttribute("tienda", tienda);
-            return "formModificarTienda";
+            flash.addFlashAttribute("error", "Los números de telefono solo pueden contener el código de país precedido de un simbolo + (opcional) y nueve números. Sin espacios");
+            flash.addFlashAttribute("tienda", tienda);
+
+            return "redirect:/tiendas/" + idUsu + "/modificar";
         }
         if(!tienda.getDireccion().getCodigoPostal().matches("[0-9]{5}")){
-            model.addAttribute("error", "El código postal solo puede contener 5 dígitos");
-            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-            model.addAttribute("tienda", tienda);
+            flash.addFlashAttribute("error", "El código postal solo puede contener 5 dígitos");
+            flash.addFlashAttribute("tienda", tienda);
 
-            return "formModificarTienda";
+            return "redirect:/tiendas/" + idUsu + "/modificar";
         }
         try{
             usuarioService.modificarTienda(tienda, idUsu);
         } catch (Exception e){
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-            model.addAttribute("tienda", tienda);
-            return "formModificarTienda";
+            flash.addFlashAttribute("error", e.getMessage());
+            flash.addFlashAttribute("tienda", tienda);
+
+            return "redirect:/tiendas/" + idUsu + "/modificar";
         }
 
         return "redirect:/tiendas";
