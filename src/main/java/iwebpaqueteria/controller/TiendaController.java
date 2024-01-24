@@ -140,14 +140,14 @@ public class TiendaController {
         //tienda.getDireccion().setTelefono(tienda.getTelefono());
         //tienda.getDireccion().setNombre(tienda.getNombre());
 
-        if (!tienda.getTelefono().matches("[0-9+]+")){
+        if (!tienda.getTelefono().matches("[0-9+]+") || !tienda.getDireccion().getTelefono().matches("[0-9]+")){
             model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
             model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
             model.addAttribute("tienda", tienda);
 
             return "formNuevaTienda";
         }
-        if(!tienda.getDireccion().getCodigoPostal().matches("[0-9](\\d{3})")){
+        if(!tienda.getDireccion().getCodigoPostal().matches("[0-9]{5}")){
             model.addAttribute("error", "El código postal solo puede contener 5 dígitos");
             model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
             model.addAttribute("tienda", tienda);
@@ -158,4 +158,55 @@ public class TiendaController {
 
         return "redirect:/tiendas";
     }
+
+    @GetMapping("/tiendas/{id}/modificar")
+    public String modificarRepartidor(@PathVariable(value="id") Long idUsu, Model model, HttpSession session) {
+
+        comprobarUsuarioLogeadoWebMaster();
+
+        if (usuarioService.findById(idUsu) == null){
+            return "redirect:/tiendas";
+        }
+
+        UsuarioData tienda = usuarioService.findById(idUsu);
+        model.addAttribute("tienda", tienda);
+        model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+
+        return "formModificarTienda";
+    }
+
+    @PostMapping("/tiendas/{id}/modificar")
+    public String modRepartidor(@PathVariable(value="id") Long idUsu, @ModelAttribute UsuarioData tienda, Model model, HttpSession session) {
+
+        comprobarUsuarioLogeadoWebMaster();
+
+        if (usuarioService.findById(idUsu) == null || !idUsu.equals(tienda.getId())){
+            return "redirect:/tiendas";
+        }
+
+        if (!tienda.getTelefono().matches("[0-9+]+") || !tienda.getDireccion().getTelefono().matches("[0-9]+")){
+            model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
+            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+            model.addAttribute("tienda", tienda);
+            return "formModificarTienda";
+        }
+        if(!tienda.getDireccion().getCodigoPostal().matches("[0-9]{5}")){
+            model.addAttribute("error", "El código postal solo puede contener 5 dígitos");
+            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+            model.addAttribute("tienda", tienda);
+
+            return "formModificarTienda";
+        }
+        try{
+            usuarioService.modificarTienda(tienda, idUsu);
+        } catch (Exception e){
+            model.addAttribute("error", e.getMessage());
+            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
+            model.addAttribute("tienda", tienda);
+            return "formModificarTienda";
+        }
+
+        return "redirect:/tiendas";
+    }
+
 }

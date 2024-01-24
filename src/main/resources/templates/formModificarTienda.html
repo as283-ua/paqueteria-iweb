@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments :: head (titulo='Modificar tienda')"></head>
+
+<div th:replace="NavMenu"></div>
+
+<body>
+<div class="container-fluid">
+
+    <div class="row justify-content-center mb-3">
+        <div class="col-auto">
+            <h2>Modificar tienda</h2>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-10">
+            <form method="post" th:action="@{/tiendas/{id}/modificar(id=${tienda.id})}" th:object="${tienda}">
+                <div class="row justify-content-center">
+                    <div class="col-8">
+                        <div class="form-group">
+                            <label for="email">Correo electronico</label>
+                            <input id="email" class="form-control" name="email" placeholder="Correo electrónico" type="text" th:field="*{email}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input id="nombre" class="form-control" name="password"  placeholder="Nombre" type="text" th:field="*{nombre}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Telefono</label>
+                            <input id="telefono" class="form-control" name="telefono"  placeholder="666666666" type="text" th:field="*{telefono}" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Contraseña</label>
+                            <input id="password" class="form-control" name="password"  placeholder="Contraseña" type="password" th:field="*{contrasenya}" required/>
+                        </div>
+                        <div class="col-ce">
+                            <h3> Dirección </h3>
+                        </div>
+                        <div class="form-group row">
+                            <label for="prov" class="col-2 col-form-label">Provincia</label>
+                            <input id="prov" class="form-control col-4" name="prov" placeholder="Alicante" type="text" th:field="*{direccion.provincia}" required/>
+                            <label for="localidad" class="col-2 col-form-label">Localidad</label>
+                            <input id="localidad" class="form-control col-4" name="localidad" placeholder="Alicante" type="text" th:field="*{direccion.localidad}" required/>
+                        </div>
+                        <div class="form-group row">
+                            <label for="CP" class="col-2 col-form-label">Código postal</label>
+                            <input id="CP" class="form-control col-4" name="CP" placeholder="01234" type="text" th:field="*{direccion.codigoPostal}" required/>
+                            <label for="calle" class="col-2 col-form-label">Calle</label>
+                            <input id="calle" class="form-control col-4" name="calle" placeholder="Calle" type="text" th:field="*{direccion.calle}" required/>
+                        </div>
+                        <div class="form-group row">
+                            <label for="numero" class="col-2 col-form-label">Número</label>
+                            <input id="numero" class="form-control col-4" name="numero" placeholder="7" type="text" th:field="*{direccion.numero}" required/>
+                            <label for="planta" class="col-2 col-form-label">Planta</label>
+                            <input id="planta" class="form-control col-4" name="planta" placeholder="3" type="text" th:field="*{direccion.planta}" required/>
+                        </div>
+                        <div class="form-group row">
+                            <label for="tlf" class="col-2 col-form-label">Teléfono de contacto</label>
+                            <input id="tlf" class="form-control col-4" name="tlf" placeholder="666666666" type="text" th:field="*{direccion.telefono}" required/>
+                            <label for="nmb" class="col-2 col-form-label">Nombre de contacto</label>
+                            <input id="nmb" class="form-control col-4" name="nmb" placeholder="Contacto" type="text" th:field="*{direccion.nombre}" required/>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Dar de alta</button>
+                        <a class="btn btn-danger" href="/tiendas">Volver</a>
+            </form>
+        </div>
+    </div>
+    <div class="row mt-3 justify-content-center">
+        <div class="col-6">
+            <div class="alert alert-danger" th:if="${error != null}" th:text="${error}"></div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="fragments::javascript"/>
+
+</body>
+</html>
