@@ -26,7 +26,7 @@
 
         <div th:if="${error != null}" class="row mt-3">
                 <div class="col">
-                        <label class="alert alert-danger" th:text="${error}"/>
+                            <label class="alert alert-danger" th:text="${error}"/>
                 </div>
         </div>
 
@@ -60,7 +60,7 @@
                         </thead>
                         <tbody>
                         <tr th:each="estado : ${historico}">
-                            <td th:text="${estado.fecha}"></td>
+                            <td th:text="${#strings.substring(estado.getFecha(), 8, 10) + '-' + #strings.substring(estado.getFecha(), 5, 7) + '-' + #strings.substring(estado.getFecha(), 0, 4) + ' ' + #strings.substring(estado.getFecha(), 11, 16)}"></td>
                             <td th:text="${estado.estado}"></td>
                             <td th:text="${estado.observaciones}"></td>
                         </tr>

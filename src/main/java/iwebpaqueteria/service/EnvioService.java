@@ -531,12 +531,20 @@ public class EnvioService {
     }
 
     @Transactional(readOnly = true)
-    public List<HistoricoData> historicoDeEnvio(Long idEnvio){
+    public List<HistoricoData> historicoDeEnvio(Long idEnvio) {
         Envio envio = envioRepository.findById(idEnvio).orElse(null);
-        if(envio == null)
+        if (envio == null) {
             throw new IllegalArgumentException("No existe envío con id " + idEnvio);
+        }
 
-        return envio.getHistoricos().stream().map(historico -> modelMapper.map(historico, HistoricoData.class)).collect(Collectors.toList());
+        // Ordenar la lista por fecha
+        List<HistoricoData> historicosOrdenados = envio.getHistoricos()
+                .stream()
+                .map(historico -> modelMapper.map(historico, HistoricoData.class))
+                .sorted(Comparator.comparing(HistoricoData::getFecha))
+                .collect(Collectors.toList());
+
+        return historicosOrdenados;
     }
 
     private boolean comprobarCancelable(Envio envio) {
