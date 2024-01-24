@@ -112,8 +112,11 @@ public class UsuarioService {
     @Transactional
     public UsuarioData registrarTienda(UsuarioData usuario, DireccionData direccion) {
         Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
+        Optional<Usuario> usuarioBD2 = usuarioRepository.findByTelefono(usuario.getTelefono());
         if (usuarioBD.isPresent())
             throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
+        else if (usuarioBD2.isPresent())
+            throw new UsuarioServiceException("Ya hay un usuario con teléfono " + usuario.getTelefono() + " registrado");
         else if (usuario.getEmail() == null)
             throw new UsuarioServiceException("El usuario no tiene email");
         else if (usuario.getContrasenya() == null)
@@ -139,9 +142,12 @@ public class UsuarioService {
 
     @Transactional
     public UsuarioData modificarTienda(UsuarioData usuario, Long idUsu) {
-        Optional<Usuario> usuarioBD = usuarioRepository.findById(idUsu);
+        Optional<Usuario> usuarioBD = usuarioRepository.findByEmail(usuario.getEmail());
+        Optional<Usuario> usuarioBD2 = usuarioRepository.findByTelefono(usuario.getTelefono());
         if (usuarioBD.isEmpty())
             throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " no está registrado");
+        else if (usuarioBD2.isPresent())
+            throw new UsuarioServiceException("Ya hay un usuario con teléfono " + usuario.getTelefono() + " registrado");
         else if (usuario.getEmail() == null)
             throw new UsuarioServiceException("El usuario no tiene email");
         else if (usuario.getContrasenya() == null)

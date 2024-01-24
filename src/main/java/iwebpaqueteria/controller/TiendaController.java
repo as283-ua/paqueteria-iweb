@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -128,33 +129,41 @@ public class TiendaController {
         comprobarUsuarioLogeadoWebMaster();
 
         model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-        model.addAttribute("tienda", new UsuarioData());
+        if(model.getAttribute("tienda") == null){
+            model.addAttribute("tienda", new UsuarioData());
+        }
 
         return "formNuevaTienda";
     }
 
     @PostMapping("/tiendas/nuevo")
-    public String altaTienda(@ModelAttribute UsuarioData tienda, Model model, HttpSession session) {
+    public String altaTienda(@ModelAttribute UsuarioData tienda, Model model, RedirectAttributes flash) {
 
         comprobarUsuarioLogeadoWebMaster();
         //tienda.getDireccion().setTelefono(tienda.getTelefono());
         //tienda.getDireccion().setNombre(tienda.getNombre());
 
-        if (!tienda.getTelefono().matches("[0-9+]+") || !tienda.getDireccion().getTelefono().matches("[0-9]+")){
-            model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
-            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-            model.addAttribute("tienda", tienda);
+        if (!tienda.getTelefono().matches("(\\+[0-9]{1,3})?[0-9]{9}") || !tienda.getDireccion().getTelefono().matches("(\\+[0-9]{1,3})?[0-9]{9}")){
+            flash.addFlashAttribute("error", "Los números de telefono solo pueden contener el código de país precedido de un simbolo + (opcional) y nueve números. Sin espacios");
+            flash.addFlashAttribute("tienda", tienda);
 
-            return "formNuevaTienda";
+            return "redirect:/tiendas/nuevo";
         }
         if(!tienda.getDireccion().getCodigoPostal().matches("[0-9]{5}")){
-            model.addAttribute("error", "El código postal solo puede contener 5 dígitos");
-            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-            model.addAttribute("tienda", tienda);
+            flash.addFlashAttribute("error", "El código postal solo puede contener 5 dígitos");
+            flash.addFlashAttribute("tienda", tienda);
 
-            return "formNuevaTienda";
+            return "redirect:/tiendas/nuevo";
         }
-        usuarioService.registrarTienda(tienda,  new DireccionData(tienda.getDireccion()));
+
+        try{
+            usuarioService.registrarTienda(tienda,  new DireccionData(tienda.getDireccion()));
+        } catch (Exception e){
+            flash.addFlashAttribute("error", e.getMessage());
+            flash.addFlashAttribute("tienda", tienda);
+
+            return "redirect:/tiendas/nuevo";
+        }
 
         return "redirect:/tiendas";
     }
@@ -184,7 +193,7 @@ public class TiendaController {
             return "redirect:/tiendas";
         }
 
-        if (!tienda.getTelefono().matches("[0-9+]+") || !tienda.getDireccion().getTelefono().matches("[0-9]+")){
+        if (!tienda.getTelefono().matches("(\\+[0-9]{1,3})?[0-9]{9}") || !tienda.getDireccion().getTelefono().matches("(\\+[0-9]{1,3})?[0-9]{9}")){
             model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
             model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
             model.addAttribute("tienda", tienda);
