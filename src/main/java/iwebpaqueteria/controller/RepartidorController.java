@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.util.HashMap;
@@ -89,25 +90,32 @@ public class RepartidorController {
         comprobarUsuarioLogeadoWebMaster();
 
         model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-        model.addAttribute("repartidor", new UsuarioData());
+        if(model.getAttribute("repartidor") == null)
+            model.addAttribute("repartidor", new UsuarioData());
 
         return "formNuevoRepartidor";
     }
 
     @PostMapping("/repartidores/nuevo")
-    public String altaRepartidor(@ModelAttribute UsuarioData repartidor, Model model, HttpSession session) {
+    public String altaRepartidor(@ModelAttribute UsuarioData repartidor, Model model, RedirectAttributes flash) {
 
         comprobarUsuarioLogeadoWebMaster();
 
-        if (!repartidor.getTelefono().matches("[0-9+]+")){
-            model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
-            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-            model.addAttribute("repartidor", new UsuarioData());
+        if (!repartidor.getTelefono().matches("(\\+[0-9]{1,3})?[0-9]{9}")){
+            flash.addFlashAttribute("error", "El teléfono solo puede contener el código de país precedido de un simbolo + (opcional) y nueve números. Sin espacios");
+            repartidor.setTelefono("");
+            flash.addFlashAttribute("repartidor", repartidor);
 
-            return "formNuevoRepartidor";
+            return "redirect:/repartidores/nuevo";
         }
 
-        usuarioService.registrarRepartidor(repartidor);
+        try{
+            usuarioService.registrarRepartidor(repartidor);
+        } catch(Exception e){
+            flash.addFlashAttribute("error", e.getMessage());
+            flash.addFlashAttribute("repartidor", repartidor);
+            return "redirect:/repartidores/nuevo";
+        }
 
         return "redirect:/repartidores";
     }
@@ -129,7 +137,7 @@ public class RepartidorController {
     }
 
     @PostMapping("/repartidores/{id}/modificar")
-    public String modRepartidor(@PathVariable(value="id") Long idUsu, @ModelAttribute UsuarioData repartidor, Model model, HttpSession session) {
+    public String modRepartidor(@PathVariable(value="id") Long idUsu, @ModelAttribute UsuarioData repartidor, Model model, RedirectAttributes flash) {
 
         comprobarUsuarioLogeadoWebMaster();
 
@@ -137,20 +145,19 @@ public class RepartidorController {
             return "redirect:/repartidores";
         }
 
-        if (!repartidor.getTelefono().matches("[0-9+]+")){
-            model.addAttribute("error", "El teléfono puede contener solo números y el símbolo +");
-            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-            model.addAttribute("repartidor", repartidor);
-            return "formModificarRepartidor";
+        if (!repartidor.getTelefono().matches("(\\+[0-9]{1,3})?[0-9]{9}")){
+            repartidor.setTelefono("");
+            flash.addFlashAttribute("repartidor", repartidor);
+            flash.addFlashAttribute("error", "El teléfono solo puede contener el código de país precedido de un simbolo + (opcional) y nueve números. Sin espacios");
+            return "redirect:/repartidores/" + idUsu + "/modificar";
         }
 
         try{
             usuarioService.modificarRepartidor(repartidor, idUsu);
         } catch (Exception e){
-            model.addAttribute("error", e.getMessage());
-            model.addAttribute("usuario", usuarioService.findById(managerUserSession.usuarioLogeado()));
-            model.addAttribute("repartidor", repartidor);
-            return "formModificarRepartidor";
+            flash.addFlashAttribute("repartidor", repartidor);
+            flash.addFlashAttribute("error", e.getMessage());
+            return "redirect:/repartidores/" + idUsu + "/modificar";
         }
 
         return "redirect:/repartidores";

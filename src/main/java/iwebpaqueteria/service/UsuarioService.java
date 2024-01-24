@@ -97,6 +97,10 @@ public class UsuarioService {
                     usuarioRepository.findByEmail(usu.getEmail()).isPresent())
                 throw new UsuarioServiceException("El usuario " + usuario.getEmail() + " ya está registrado");
 
+            if(!usu.getTelefono().equals(usuarioBD.get().getTelefono()) &&
+                    usuarioRepository.findByTelefono(usu.getTelefono()).isPresent())
+                throw new UsuarioServiceException("Ya hay un usuario con teléfono " + usuario.getTelefono() + " registrado");
+
             usu.setId(idUsu);
             Rol rol = rolRepository.findByNombre("repartidor").orElse(null);
             usu.setRol(rol);

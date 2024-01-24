@@ -11,4 +11,5 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long> {
     Optional<Usuario> findByNombre(String nombre);
     Optional<List<Usuario>> findAllByNombreIgnoreCaseStartsWith(String nombre);
     Optional<Usuario> findByAPIKey(String apiKey);
+    Optional<Usuario> findByTelefono(String telefono);
 }
