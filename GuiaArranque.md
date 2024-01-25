@@ -19,13 +19,15 @@ La documentación de la API REST está `API_DEF.md` en este mismo directorio.
 
 ## Con BD postgres
 
+- Crear Network Docker:
+`docker network create network-iweb`
+
 - Crear BD Postgres:
 
-`docker run -d -p 5432:5432 --name postgres-iweb -e POSTGRES_USER=paqueteria -e POSTGRES_PASSWORD=paqueteria -e 
+`docker run --network network-iweb --network-alias postgres -d -p 5432:5432 --name postgres-iweb -e POSTGRES_USER=paqueteria -e POSTGRES_PASSWORD=paqueteria -e 
 POSTGRES_DB=paqueteria postgres:13`
 
 - Arrancar la aplicación:
-
-`mvn spring-boot:run -Dspring-boot.run.profiles=postgres`
+`docker run --rm --network network-iweb -p 8080:8080 as283/paqueteria-iweb --spring.profiles.active=postgres --POSTGRES_HOST=postgres`
 
 Hace falta dar de alta a las tiendas con el usuario "admin@ua", contraseña "admin123".
