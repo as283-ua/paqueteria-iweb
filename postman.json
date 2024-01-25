@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "14cac67d-478e-4205-a30d-7f076ba2373a",
+		"name": "IWEB",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24751989"
+	},
+	"item": [
+		{
+			"name": "Crear envio",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var data = JSON.parse(responseBody)",
+							"pm.collectionVariables.set(\"codigo\", data.codigo)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "123456789",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"peso\": 50,\n  \"bultos\": 5,\n  \"observaciones\": \"like grah\",\n  \"destino\": {\n    \"codigoPostal\": \"04005\",\n    \"localidad\": \"Alicante\",\n    \"provincia\": \"Alicante\",\n    \"numero\": 15,\n    \"planta\": \"4\",\n    \"calle\": \"Nada\",\n    \"nombre\": \"?\",\n    \"telefono\": 604289058\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ip}}/api/envios",
+					"host": [
+						"{{ip}}"
+					],
+					"path": [
+						"api",
+						"envios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Crear envio sin datos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "123456789",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"destino\":\n    {\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ip}}/api/envios",
+					"host": [
+						"{{ip}}"
+					],
+					"path": [
+						"api",
+						"envios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancelar envio",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "123456789",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"observaciones\": \"Lo he comprado por error\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ip}}/api/envios/{{codigo}}/historico/cancelar",
+					"host": [
+						"{{ip}}"
+					],
+					"path": [
+						"api",
+						"envios",
+						"{{codigo}}",
+						"historico",
+						"cancelar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cancelar envio auth mal",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"observaciones\": \"Lo he comprado por error\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ip}}/api/envios/{{codigo}}/historico/cancelar",
+					"host": [
+						"{{ip}}"
+					],
+					"path": [
+						"api",
+						"envios",
+						"{{codigo}}",
+						"historico",
+						"cancelar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Consultar envio",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ip}}/api/envios/{{codigo}}",
+					"host": [
+						"{{ip}}"
+					],
+					"path": [
+						"api",
+						"envios",
+						"{{codigo}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener envios",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "123456789",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fechaInicio\": \"2023-12-31\",\n    \"fechaFin\": \"2024-06-06\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ip}}/api/envios",
+					"host": [
+						"{{ip}}"
+					],
+					"path": [
+						"api",
+						"envios"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Obtener precio",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "123456789",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ip}}/api/envios/tarifas?peso=100&cp=04055&bultos=5",
+					"host": [
+						"{{ip}}"
+					],
+					"path": [
+						"api",
+						"envios",
+						"tarifas"
+					],
+					"query": [
+						{
+							"key": "peso",
+							"value": "100"
+						},
+						{
+							"key": "cp",
+							"value": "04055"
+						},
+						{
+							"key": "bultos",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fallo autenticacion",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"fechaInicio\": \"2023-12-31\",\n    \"fechaFin\": \"2024-06-06\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{ip}}/api/envios",
+					"host": [
+						"{{ip}}"
+					],
+					"path": [
+						"api",
+						"envios"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ip",
+			"value": "localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "codigo",
+			"value": "facce4018c2a413fa7dc918a0bd527d4",
+			"type": "string"
+		}
+	]
+}
